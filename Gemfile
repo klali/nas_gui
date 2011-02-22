@@ -5,7 +5,7 @@ gem "will_paginate", "~> 3.0.pre2"
 gem "rmagick"
 gem "mini_exiftool"
 gem "nested_set"
-#gem 'jquery-rails', '>= 0.2.6'
+gem 'jquery-rails', '>= 0.2.6'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
