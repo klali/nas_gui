@@ -1,0 +1,20 @@
+<h1>Editing photo</h1>
+
+<p id="notice"><%= notice %></p>
+
+<div id="rotate">
+  <div id="thumbnail">
+    <%= image_tag "/photos/#{@photo.id}/thumbnail" %>
+  </div>
+  <div id="rotate_left">
+    <%= link_to(image_tag("rotate_left.png", :height => "50", :width => "50", :border => 0), :action => :rotate_left) %>
+  </div>
+  <div id="rotate_right">
+    <%= link_to(image_tag("rotate_right.png", :height => "50", :width => "50", :border => 0), :action => :rotate_right) %>
+  </div>
+</div>
+
+<%= render 'form' %>
+
+<%= link_to 'Show', @photo %> |
+<%= link_to 'Back', photos_path %>

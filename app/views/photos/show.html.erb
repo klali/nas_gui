@@ -1,0 +1,36 @@
+<p id="notice"><%= notice %></p>
+<div class="show_photo">
+  <table>
+    <tr>
+      <td>
+        <% if !@prev.nil? %>
+          <%= link_to image_tag("/photos/#{@prev.id}/thumbnail", :border => 0, :title => "Previous photo"), :action => :show, :id => @prev %>
+        <% end %>
+      </td>
+      <td>
+        <%= link_to(image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :title => @photo.display_tags), :action => :image) %><br/>
+      </td>
+      <td>
+        <% if !@next.nil? %>
+          <%= link_to image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), :action => :show, :id => @next %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+  <div id="rotate_left">
+    <%= link_to(image_tag("rotate_left.png", :height => "50", :width => "50", :border => 0), :action => :rotate_left) %>
+  </div>
+  <div id="rotate_right">
+    <%= link_to(image_tag("rotate_right.png", :height => "50", :width => "50", :border => 0), :action => :rotate_right) %>
+  </div>
+  <table>
+    <tr><td>name</td><td><%= @photo.name %></td></tr>
+    <tr><td>path</td><td><%= @photo.path %></td></tr>
+    <tr><td>created_at</td><td><%= @photo.created_at %></td></tr>
+    <tr><td>taken_at</td><td><%= @photo.taken_at %></td></tr>
+    <tr><td>tags</td><td><%= @photo.display_tags %></td></tr>
+  </table>
+</div>
+<%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %>
+<%= link_to "Edit", :action => :edit, :id => @photo.id %>
+<%= link_to 'Back', photos_path %>

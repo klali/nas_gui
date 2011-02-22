@@ -1,0 +1,55 @@
+div#tags {
+  width: 25%;
+  text-align: left;
+  position: absolute;
+  right: 0;
+  top: 50px;
+}
+
+#photos {
+  float: left;
+  width: 75%;
+  position: relative;
+}
+
+.footer {
+  clear: both;
+}
+
+div#rotate_left {
+  float: left;
+}
+
+.thumbnail {
+  text-align: center;
+  padding: 0;
+}
+
+li.tag {
+  list-style-type: none;
+}
+
+div.thumb_footer {
+  float: left;
+  font-size: small;
+  text-align: center;
+  width: 100%;
+}
+
+div.thumbnail_inner {
+  position: relative;
+}
+
+div#slideshow {
+  width: 100%; 
+  height: 100%; 
+  position: absolute; 
+  left: 0px; 
+  top: 0px; 
+  text-align: center;
+  background-color: black;
+}
+
+img.slide {
+  height: 99%;
+}

@@ -1,0 +1,67 @@
+<h1>Listing photos</h1>
+
+<div id="container">
+  <p id="notice"><%= notice %></p>
+  <p>Displaying <%= @count %> photos</p>
+
+  <%= form_tag('/photos/filter_tags') %>
+  <table id="photos">
+    <% counter = 0 %>
+    <% @photos.each do |photo| %>
+      <% if counter % 6 == 0 %>
+        <tr id="counter_<%= counter %>">
+        <% end %>
+          <td id="photo_<%= photo.id %>" class="thumbnail">
+            <div class="thumbnail_inner">
+            <%# link_to(image_tag("/photos/#{photo.id}/thumbnail", :border => 0, :title => "#{photo.path}"), :action => 'show', :id => photo.id) %><br/>
+            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :mediumimage, :id => photo.id}, {:rel => "lightbox[page]", :title => photo.display_tags}) %>
+            <div class="thumb_footer">
+              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter + 1 %>
+              <span class="thumb_tags" title="<%= photo.display_tags %>">
+                <% trail = "" %>
+                <% trail = "..." if photo.display_tags.size > 17 %>
+                <%= link_to(photo.display_tags.slice(0,17) + trail, :action => :show, :id => photo.id) %><br/>
+                <%= link_to(photo.taken_at.strftime("%Y-%m-%d %H:%m"), :action => :show, :id => photo.id) %>
+              </span>
+            </div>
+          </div>
+          </td>
+        <% counter += 1 %>
+        <% if counter % 6 == 0 || counter == @photos.count %>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+
+  <div id="tags">
+    <% render_tree Tag.arrange do |node, child| %>
+      <li class="tag">
+      <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
+      <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
+      <%= "(#{node.photos.count})" %>
+      </li>
+      <%= child %>
+    <% end %>
+    <%= submit_tag "filter" %>
+    <%= submit_tag "assign" %>
+    <%= submit_tag "remove" %>
+    <br/>
+    <%= link_to("New tag", :controller => :tags, :action => 'new') %>
+  </div>
+</form>
+
+<div class="footer">
+  <br/><br/>
+  <% if @sort.eql? "asc" %>
+    <%= link_to("Descending", :action => 'index', :sort => 'desc') %>
+  <% else %>
+    <%= link_to("Ascending", :action => 'index', :sort => 'asc') %>
+  <% end %>
+  <br/>
+  <%= link_to "Scan for new photos", :action => 'rescan' %>
+  <% if !@photos.empty? %>
+    <%= link_to "Start slideshow", :action => 'slideshow', :id => @photos.first.id %>
+  <% end %>
+  <%= will_paginate @photos %>
+</div>
+</div>

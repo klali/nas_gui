@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NasGui</title>
+  <%= stylesheet_link_tag :all %>
+  <%= javascript_include_tag :all %>
+  <%= csrf_meta_tag %>
+  <% if @refresh %>
+    <meta http-equiv="refresh" content="4;url=<%= @refresh %>" />
+  <% end %>
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>
