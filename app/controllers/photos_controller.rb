@@ -48,12 +48,27 @@ class PhotosController < ApplicationController
     tags = session[:tags] || []
     sort = session[:sort] || "desc"
     next_and_prev = @photo.get_next_and_prev(page, tags, sort)
-    @next = next_and_prev.shift
-    @prev = next_and_prev.shift
+    @next = @photo.get_next(sort,tags)
+    @prev = @photo.get_previous(sort,tags)
 
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @photo }
+    end
+  end
+
+  def showmodal
+    @photo = Photo.find(params[:id])
+
+    page = session[:page].to_i || 1
+    tags = session[:tags] || []
+    sort = session[:sort] || "desc"
+    next_and_prev = @photo.get_next_and_prev(page, tags, sort)
+    @next = @photo.get_next(sort, tags)
+    @prev = @photo.get_previous(sort, tags)
+    respond_to do |format|
+      format.html {render :layout => false}
+      format.js
     end
   end
 
@@ -92,15 +107,15 @@ class PhotosController < ApplicationController
   # PUT /photos/1
   # PUT /photos/1.xml
   def update
-    @photo = Photo.find(params[:id])
+    photo = Photo.find(params[:id])
 
     respond_to do |format|
-      if @photo.update_attributes(params[:photo])
-        format.html { redirect_to(@photo, :notice => 'Photo was successfully updated.') }
+      if photo.update_attributes(params[:photo])
+        format.html { redirect_to(:action => :edit, :id => photo.id, :notice => 'Photo was successfully updated.')}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @photo.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => photo.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -151,7 +166,7 @@ class PhotosController < ApplicationController
     @photo = Photo.find params[:id]
     sort = session[:sort] || "desc"
     @class = "slide"
-    nxt = @photo.get_next_and_prev(page, tags, sort).first
+    nxt = @photo.get_next(sort,tags)
     if(nxt.nil?)
       nxt = Photo.get_pagination(1, tags, sort).first.first
     end
@@ -170,7 +185,7 @@ class PhotosController < ApplicationController
     photo = Photo.find(params[:id])
     photo.rotate("left")
     respond_to do |format|
-      format.html { redirect_to(photo, :notice => "Photo successfully rotated.") }
+      format.html { redirect_to(:action => :edit, :id => photo.id, :notice => "Photo successfully rotated.") }
     end
   end
 
@@ -178,7 +193,7 @@ class PhotosController < ApplicationController
     photo = Photo.find(params[:id])
     photo.rotate("right")
     respond_to do |format|
-      format.html { redirect_to(photo, :notice => "Photo successfully rotated.") }
+      format.html { redirect_to(:action => :edit, :id => photo.id, :notice => "Photo successfully rotated.") }
     end
   end
 end

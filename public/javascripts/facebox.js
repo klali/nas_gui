@@ -1,14 +1,13 @@
 /*
  * Facebox (for jQuery)
- * version: 1.2 (05/05/2008)
+ * version: 1.3
  * @requires jQuery v1.2 or later
- *
- * Examples at http://famspam.com/facebox/
+ * @homepage https://github.com/defunkt/facebox
  *
  * Licensed under the MIT:
  *   http://www.opensource.org/licenses/mit-license.php
  *
- * Copyright 2007, 2008 Chris Wanstrath [ chris@ozmm.org ]
+ * Copyright Forever Chris Wanstrath, Kyle Neath
  *
  * Usage:
  *
@@ -93,7 +92,7 @@
       <div class="popup"> \
         <div class="content"> \
         </div> \
-        <a href="#" class="close"><img src="/facebox/closelabel.png" title="close" class="close_image" /></a> \
+        <a href="#" class="close"></a> \
       </div> \
     </div>'
     },
@@ -103,14 +102,13 @@
       if ($('#facebox .loading').length == 1) return true
       showOverlay()
 
-      $('#facebox .content').empty()
-      $('#facebox .body').children().hide().end().
+      $('#facebox .content').empty().
         append('<div class="loading"><img src="'+$.facebox.settings.loadingImage+'"/></div>')
 
-      $('#facebox').css({
+      $('#facebox').show().css({
         top:	getPageScroll()[1] + (getPageHeight() / 10),
-        left:	$(window).width() / 2 - 205
-      }).show()
+        left:	$(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2)
+      })
 
       $(document).bind('keydown.facebox', function(e) {
         if (e.keyCode == 27) $.facebox.close()
@@ -124,8 +122,8 @@
       if (klass) $('#facebox .content').addClass(klass)
       $('#facebox .content').append(data)
       $('#facebox .loading').remove()
-      $('#facebox .body').children().fadeIn('normal')
-      $('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').width() / 2))
+      $('#facebox .popup').children().fadeIn('normal')
+      $('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))
       $(document).trigger('reveal.facebox').trigger('afterReveal.facebox')
     },
 
@@ -186,8 +184,11 @@
       preload.slice(-1).src = $(this).css('background-image').replace(/url\((.+)\)/, '$1')
     })
 
-    $('#facebox .close').click($.facebox.close)
-    $('#facebox .close_image').attr('src', $.facebox.settings.closeImage)
+    $('#facebox .close')
+      .click($.facebox.close)
+      .append('<img src="'
+              + $.facebox.settings.closeImage
+              + '" class="close_image" title="close">')
   }
 
   // getPageScroll() by quirksmode.com

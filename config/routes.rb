@@ -21,6 +21,7 @@ NasGui::Application.routes.draw do
       get 'rotate_left'
       get 'rotate_right'
       get 'slideshow'
+      get 'showmodal'
     end
     collection do
       get 'rescan'

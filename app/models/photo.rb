@@ -17,13 +17,7 @@ class Photo < ActiveRecord::Base
         end
       end
     }
-    #files = Dir.glob(Configuration.get_path + "**/*.jpg", File::FNM_CASEFOLD)
-    #files.each { |file|
-    #  p = add_or_update(file)
-    #  scanned += 1
-    #}
 
-    #Photo.find_all_by_deleted(false).each do |photo|
     Photo.find_each(:conditions => {:deleted => false}, :batch_size => 100) { |photo|
       if files.find_index(photo.path).nil?
         photo.deleted = true
@@ -49,7 +43,7 @@ class Photo < ActiveRecord::Base
     p.deleted = false
     exif = MiniExiftool.new file
     ex_date = exif.DateTimeOriginal
-    if(ex_date.nil? || ex_date.eql?("0000:00:00 00:00:00"))
+    if(ex_date.nil?)
       p.taken_at = stat.ctime
     else
       p['taken_at'] = ex_date
@@ -58,7 +52,7 @@ class Photo < ActiveRecord::Base
     i = Image.read(file).first
     p.save
     p.thumbnail = scale_by_pixels(i, 150.0)
-    p.medium_image = scale_by_pixels(i, 800.0)
+    p.medium_image = scale_by_pixels(i, 700.0)
     if(exif.orientation.eql? "Rotate 90 CW")
       puts "rotate CW"
       exif.orientation = ""
@@ -165,6 +159,45 @@ class Photo < ActiveRecord::Base
         :total_entries => count
     end
     [photos,count]
+  end
+
+  def get_next(sort = "desc", tags = [])
+    if(!sort.eql?("desc") && !sort.eql?("asc"))
+      sort = "desc"
+    end
+    if(sort.eql?"desc")
+      symbol = '<'
+    else
+      symbol = '>'
+    end
+    get_by_symbol(symbol, sort, tags)
+  end
+
+  def get_previous(sort ="desc", tags = [])
+    if(!sort.eql?("desc") && !sort.eql?("asc"))
+      sort = "desc"
+    end
+    if(sort.eql?"desc")
+      sort = "asc"
+      symbol = '>'
+    else
+      sort = "asc"
+      symbol = '<'
+    end
+    get_by_symbol(symbol, sort, tags)
+  end
+
+  def get_by_symbol(symbol,sort,tags)
+    if(tags.nil? || tags.empty?)
+      photo = Photo.find_by_sql("select * from photos where taken_at #{symbol} '#{taken_at}' and deleted = false order by taken_at #{sort} limit 1").first
+    else
+      join = ""
+      tags.each do |tag|
+        join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = p.id and pt_#{tag}.tag_id = #{tag}"
+      end
+      photo = Photo.find_by_sql("select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false and p.taken_at #{symbol} '#{taken_at}' group by p.id having count(pt_group.photo_id) >= #{tags.count} order by p.taken_at #{sort} limit 1").first
+    end
+    photo
   end
 
   def get_next_and_prev(page, tags, sort = "desc")

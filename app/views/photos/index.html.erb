@@ -1,3 +1,12 @@
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+      $('a[rel*=facebox]').facebox({
+loadingImage : 'images/loading.gif',
+closeImage : 'images/closelabel.png'
+})
+      }) 
+</script>
+
 <h1>Listing photos</h1>
 
 <div id="container">
@@ -13,15 +22,16 @@
         <% end %>
           <td id="photo_<%= photo.id %>" class="thumbnail">
             <div class="thumbnail_inner">
-            <%# link_to(image_tag("/photos/#{photo.id}/thumbnail", :border => 0, :title => "#{photo.path}"), :action => 'show', :id => photo.id) %><br/>
-            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :mediumimage, :id => photo.id}, {:rel => "lightbox[page]", :title => photo.display_tags}) %>
+            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :showmodal, :id => photo.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
-              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter + 1 %>
+              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter + 1, :id => "pic_#{photo.id}" %>
               <span class="thumb_tags" title="<%= photo.display_tags %>">
                 <% trail = "" %>
                 <% trail = "..." if photo.display_tags.size > 17 %>
-                <%= link_to(photo.display_tags.slice(0,17) + trail, :action => :show, :id => photo.id) %><br/>
-                <%= link_to(photo.taken_at.strftime("%Y-%m-%d %H:%m"), :action => :show, :id => photo.id) %>
+                <label for="pic_<%= photo.id %>">
+                  <%= photo.display_tags.slice(0,17) + trail %><br/>
+                  <%= photo.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
+                </label>
               </span>
             </div>
           </div>
