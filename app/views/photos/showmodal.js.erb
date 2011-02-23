@@ -1,5 +1,5 @@
-$('#prev').html('<%= link_to_unless(@prev.nil?, image_tag("/photos/#{@prev.id}/thumbnail", :border => 0, :title => "Previous photo"), {:action => :showmodal, :id => @prev}, {:remote => true}) %>');
+$('#prev').html('<%= link_to_unless(@prev.nil?, image_tag("/photos/#{@prev.id}/thumbnail", :border => 0, :title => "Previous photo"), {:action => :showmodal, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
 $('#photo').html('<%= link_to(image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :title => @photo.display_tags), :action => :image) %>');
-$('#next').html('<%= link_to_unless(@next.nil?, image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :showmodal, :id => @next}, {:remote => true}) %>');
+$('#next').html('<%= link_to_unless(@next.nil?, image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :showmodal, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
 $('#footer').html('<%= @photo.display_tags %><br/><%= @photo.taken_at %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
 jQuery(document).trigger('reveal.facebox');

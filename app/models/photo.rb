@@ -170,7 +170,7 @@ class Photo < ActiveRecord::Base
     else
       symbol = '>'
     end
-    get_by_symbol(symbol, sort, tags)
+    get_one_by_symbol(symbol, sort, tags)
   end
 
   def get_previous(sort ="desc", tags = [])
@@ -184,10 +184,10 @@ class Photo < ActiveRecord::Base
       sort = "asc"
       symbol = '<'
     end
-    get_by_symbol(symbol, sort, tags)
+    get_one_by_symbol(symbol, sort, tags)
   end
 
-  def get_by_symbol(symbol,sort,tags)
+  def get_one_by_symbol(symbol,sort,tags)
     if(tags.nil? || tags.empty?)
       photo = Photo.find_by_sql("select * from photos where taken_at #{symbol} '#{taken_at}' and deleted = false order by taken_at #{sort} limit 1").first
     else
@@ -198,40 +198,5 @@ class Photo < ActiveRecord::Base
       photo = Photo.find_by_sql("select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false and p.taken_at #{symbol} '#{taken_at}' group by p.id having count(pt_group.photo_id) >= #{tags.count} order by p.taken_at #{sort} limit 1").first
     end
     photo
-  end
-
-  def get_next_and_prev(page, tags, sort = "desc")
-    photos = Photo.get_pagination(page, tags, sort).first
-    nphotos = pphotos = photos
-    cur = photos.find_index self
-    nxt = nil
-    prv = nil
-    if(cur.nil?)
-      cur = 0
-      nxt = 0
-      prv = 0
-    end
-
-    if(cur + 1 == photos.size && nxt.nil?)
-      nphotos = Photo.get_pagination(page + 1, tags, sort).first
-      nxt = 0
-    elsif(nxt.nil? && cur + 1 != photos.size)
-      nxt = cur + 1
-    end
-    if !nxt.nil? && !nphotos[nxt].nil?
-      rnext = nphotos[nxt]
-    end
-
-    if(cur == 0 && page != 1 && prv.nil?)
-      pphotos = Photo.get_pagination(page - 1, tags, sort).first
-      prv = pphotos.size - 1
-    elsif(prv.nil? && cur > 0)
-      prv = cur - 1
-    end
-    if !prv.nil? && !pphotos[prv].nil?
-      rprev = pphotos[prv]
-    end
-
-    [rnext,rprev]
   end
 end
