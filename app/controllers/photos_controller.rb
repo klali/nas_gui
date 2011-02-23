@@ -47,10 +47,8 @@ class PhotosController < ApplicationController
     page = session[:page].to_i || 1
     tags = session[:tags] || []
     sort = session[:sort] || "desc"
-    next_and_prev = @photo.get_next_and_prev(page, tags, sort)
     @next = @photo.get_next(sort,tags)
     @prev = @photo.get_previous(sort,tags)
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @photo }
@@ -63,7 +61,6 @@ class PhotosController < ApplicationController
     page = session[:page].to_i || 1
     tags = session[:tags] || []
     sort = session[:sort] || "desc"
-    next_and_prev = @photo.get_next_and_prev(page, tags, sort)
     @next = @photo.get_next(sort, tags)
     @prev = @photo.get_previous(sort, tags)
     respond_to do |format|
