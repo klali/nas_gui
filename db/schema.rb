@@ -10,13 +10,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110222153950) do
+ActiveRecord::Schema.define(:version => 20110223165839) do
 
   create_table "configurations", :force => true do |t|
-    t.string   "path"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "key"
+    t.string   "value"
   end
+
+  add_index "configurations", ["key"], :name => "index_configurations_on_key", :unique => true
 
   create_table "medium_images", :force => true do |t|
     t.integer  "photo_id"
@@ -38,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20110222153950) do
 
   add_index "photos", ["deleted"], :name => "index_photos_on_deleted"
   add_index "photos", ["path"], :name => "index_photos_on_path", :unique => true
+  add_index "photos", ["taken_at"], :name => "index_photos_on_taken_at"
 
   create_table "photos_tags", :id => false, :force => true do |t|
     t.integer "photo_id"

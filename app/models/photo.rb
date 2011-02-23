@@ -9,7 +9,7 @@ class Photo < ActiveRecord::Base
 
   def self.scan_directory
     scanned = 0
-    Find.find(Configuration.get_path) { |path|
+    Find.find(Configuration.get_photo_path) { |path|
       if FileTest.file?(path)
         if(path.ends_with?(".jpg") || path.ends_with?(".JPG"))
           p = add_or_update(path)

@@ -22,7 +22,7 @@ closeImage : 'images/closelabel.png'
         <% end %>
           <td id="photo_<%= photo.id %>" class="thumbnail">
             <div class="thumbnail_inner">
-            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :showmodal, :id => photo.id}, {:rel => "facebox"}) %>
+            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
               <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter + 1, :id => "pic_#{photo.id}" %>
               <span class="thumb_tags" title="<%= photo.display_tags %>">
@@ -75,3 +75,8 @@ closeImage : 'images/closelabel.png'
   <%= will_paginate @photos %>
 </div>
 </div>
+<% unless @modal.nil? %>
+  <script type="text/javascript">
+    jQuery.facebox({ajax: "/photos/<%= @modal %>"})
+  </script>
+<% end %>

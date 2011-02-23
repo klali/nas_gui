@@ -8,6 +8,10 @@ class PhotosController < ApplicationController
     @sort = params[:sort] || session[:sort] || "desc"
     session[:sort] = @sort
 
+    if(params[:modal])
+      @modal = params[:modal]
+    end
+
     pagination = Photo.get_pagination(page, @selected_tags, @sort)
     @photos = pagination.shift
     @count = pagination.shift
@@ -39,23 +43,7 @@ class PhotosController < ApplicationController
     redirect_to(photos_url)
   end
 
-  # GET /photos/1
-  # GET /photos/1.xml
   def show
-    @photo = Photo.find(params[:id])
-
-    page = session[:page].to_i || 1
-    tags = session[:tags] || []
-    sort = session[:sort] || "desc"
-    @next = @photo.get_next(sort,tags)
-    @prev = @photo.get_previous(sort,tags)
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @photo }
-    end
-  end
-
-  def showmodal
     @photo = Photo.find(params[:id])
 
     page = session[:page].to_i || 1
@@ -85,22 +73,6 @@ class PhotosController < ApplicationController
     @photo = Photo.find(params[:id])
   end
 
-  # POST /photos
-  # POST /photos.xml
-  def create
-    @photo = Photo.new(params[:photo])
-
-    respond_to do |format|
-      if @photo.save
-        format.html { redirect_to(@photo, :notice => 'Photo was successfully created.') }
-        format.xml  { render :xml => @photo, :status => :created, :location => @photo }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @photo.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   # PUT /photos/1
   # PUT /photos/1.xml
   def update
@@ -108,24 +80,12 @@ class PhotosController < ApplicationController
 
     respond_to do |format|
       if photo.update_attributes(params[:photo])
-        format.html { redirect_to(:action => :edit, :id => photo.id, :notice => 'Photo was successfully updated.')}
+        format.html { redirect_to(:action => :index, :modal => photo.id, :notice => 'Photo was successfully updated.')}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => photo.errors, :status => :unprocessable_entity }
       end
-    end
-  end
-
-  # DELETE /photos/1
-  # DELETE /photos/1.xml
-  def destroy
-    @photo = Photo.find(params[:id])
-    @photo.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(photos_url) }
-      format.xml  { head :ok }
     end
   end
 
@@ -182,7 +142,7 @@ class PhotosController < ApplicationController
     photo = Photo.find(params[:id])
     photo.rotate("left")
     respond_to do |format|
-      format.html { redirect_to(:action => :edit, :id => photo.id, :notice => "Photo successfully rotated.") }
+      format.html { redirect_to({:action => :index, :modal => photo.id}, {:notice => "Photo successfully rotated."}) }
     end
   end
 
@@ -190,7 +150,7 @@ class PhotosController < ApplicationController
     photo = Photo.find(params[:id])
     photo.rotate("right")
     respond_to do |format|
-      format.html { redirect_to(:action => :edit, :id => photo.id, :notice => "Photo successfully rotated.") }
+      format.html { redirect_to({:action => :index, :modal => photo.id}, {:notice => "Photo successfully rotated."}) }
     end
   end
 end
