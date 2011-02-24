@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110223165839) do
+ActiveRecord::Schema.define(:version => 20110224085517) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -54,10 +54,14 @@ ActiveRecord::Schema.define(:version => 20110223165839) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.binary   "thumbnail"
     t.integer  "parent_id"
     t.integer  "lft"
     t.integer  "rgt"
+    t.integer  "thumb_id"
+    t.integer  "thumb_width"
+    t.integer  "thumb_height"
+    t.integer  "thumb_x1"
+    t.integer  "thumb_y1"
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
@@ -67,8 +71,10 @@ ActiveRecord::Schema.define(:version => 20110223165839) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.binary   "image"
+    t.integer  "tag_id"
   end
 
   add_index "thumbnails", ["photo_id"], :name => "index_thumbnails_on_photo_id", :unique => true
+  add_index "thumbnails", ["tag_id"], :name => "index_thumbnails_on_tag_id", :unique => true
 
 end

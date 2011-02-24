@@ -53,3 +53,24 @@ div#slideshow {
 img.slide {
   height: 99%;
 }
+
+div.frame {
+  background: none repeat scroll 0 0 #FFFFFF;
+  border: 2px solid #DDDDDD;
+  padding: 0.8em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.htmltooltip{
+  position: absolute; /*leave this and next 3 values alone*/
+  z-index: 1000;
+  left: -1000px;
+  top: -1000px;
+  background: #272727;
+  border: 10px solid black;
+  color: white;
+  padding: 3px;
+  width: 50px; /*width of tooltip*/
+  height: 50px;
+}

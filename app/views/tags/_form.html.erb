@@ -22,6 +22,20 @@
         <td><%= f.select :parent_id, nested_set_options(Tag, @tag){|i,level| "#{'-' * level} #{i.name}"}, :include_blank => true %></td>
     </tr>
   </table>
+  <% unless @tag.photos.empty? %>
+    <div id="tag_thumbnail">
+      <% if @tag.thumbnail.nil? %>
+        <%= link_to("Add thumbnail", {:action => :thumbnail, :id => @tag.id}, {:rel => 'facebox'}) %>
+      <% else %>
+        <%= link_to(image_tag("/tags/#{@tag.id}/display_thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @tag.thumb_id}, {:rel => 'facebox'}) %>
+      <% end %>
+    </div>
+    <%= f.hidden_field(:thumb_id) %>
+    <%= f.hidden_field(:thumb_width) %>
+    <%= f.hidden_field(:thumb_height) %>
+    <%= f.hidden_field(:thumb_x1) %>
+    <%= f.hidden_field(:thumb_y1) %>
+  <% end %>
   <%= f.submit %>
   </div>
 <% end %>

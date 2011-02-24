@@ -1,12 +1,3 @@
-<script type="text/javascript">
-  jQuery(document).ready(function($) {
-      $('a[rel*=facebox]').facebox({
-loadingImage : 'images/loading.gif',
-closeImage : 'images/closelabel.png'
-})
-      }) 
-</script>
-
 <h1>Listing photos</h1>
 
 <div id="container">
@@ -44,11 +35,22 @@ closeImage : 'images/closelabel.png'
   </table>
 
   <div id="tags">
-    <% render_tree Tag.arrange do |node, child| %>
+    <%= render_tree Tag.arrange do |node, child| %>
       <li class="tag">
-      <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
-      <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-      <%= "(#{node.photos.count})" %>
+      <% rel = "" %>
+      <% unless node.thumbnail.nil? %>
+        <% rel = "rel='htmltooltip'" %>
+      <% end %> 
+      <div class="tag_inner" <%= rel %>>
+        <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
+        <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
+        <%= "(#{node.photos.count})" %>
+      </div>
+      <% unless node.thumbnail.nil? %>
+        <div class="htmltooltip">
+          <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
+        </div>
+      <% end %>
       </li>
       <%= child %>
     <% end %>
@@ -77,6 +79,8 @@ closeImage : 'images/closelabel.png'
 </div>
 <% unless @modal.nil? %>
   <script type="text/javascript">
+    var foobarHeight = "<%= @photo_height %>";
+    var foobarWidth = "<%= @photo_width %>";
     jQuery.facebox({ajax: "/photos/<%= @modal %>"})
   </script>
 <% end %>

@@ -80,4 +80,39 @@ class TagsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def thumbnail
+    @tag = Tag.find(params[:id])
+    @photo = nil
+    if(params[:photo_id])
+      @photo = Photo.find(params[:photo_id])
+    end
+    if(@photo.nil?)
+      @photo ||= @tag.get_first_photo
+    end
+    unless(@tag.thumbnail.nil?)
+      @x1 = @tag.thumb_x1
+      @y1 = @tag.thumb_y1
+      @x2 = @tag.thumb_x1 + @tag.thumb_width
+      @y2 = @tag.thumb_y1 + @tag.thumb_height
+    end
+    mediumimage = @photo.get_mediumimage
+    @photo_width = mediumimage.columns
+    @photo_height = mediumimage.rows
+    @next_photo = @photo.get_next('desc', [@tag.id])
+    @prev_photo = @photo.get_previous('desc', [@tag.id])
+
+    respond_to do |format|
+      format.html { render :layout => false }
+      format.js
+    end
+  end
+
+  def display_thumbnail
+    tag = Tag.find(params[:id])
+    send_data(tag.thumbnail.image,
+              :type => "image/jpeg",
+              :filename => "thumb_#{tag.name}",
+              :disposition => 'inline')
+  end
 end

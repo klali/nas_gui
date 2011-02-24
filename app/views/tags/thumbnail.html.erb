@@ -1,0 +1,66 @@
+<div>
+  <table>
+    <tr>
+      <td>
+        <div id="prev_photo">
+          <% unless @prev_photo.nil? %>
+            <%= link_to(image_tag("/photos/#{@prev_photo.id}/thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @prev_photo.id}, {:remote => true}) %>
+          <% end %>
+          </td><td>
+        </div>
+        <div id="photo">
+          <%= image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :id => 'crop_photo') %>
+        </div>
+        </td><td>
+        <div id="next_photo">
+          <% unless @next_photo.nil? %>
+            <%= link_to(image_tag("/photos/#{@next_photo.id}/thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true}) %>
+          <% end %>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <div class="frame" style="width: 50px; height: 50px;">
+          <div id="preview" style="width: 50px; height: 50px; overflow: hidden;">
+            <%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "50px", :height => "50px" %>
+          </div>
+        </div>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <div id="thumb_submit">
+          <%= hidden_field_tag('temp_thumb_id', "#{@photo.id}") %>
+          <%= hidden_field_tag('temp_thumb_width') %>
+          <%= hidden_field_tag('temp_thumb_height') %>
+          <%= hidden_field_tag('temp_thumb_x1') %>
+          <%= hidden_field_tag('temp_thumb_y1') %>
+          <button id="saveButton" disabled="disabled" onClick="saveThumb()">Save &amp; close</button>
+        </div>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function($) {
+      setTimeout(" $('img#crop_photo').imgAreaSelect({ handles: true, onSelectChange: preview, onSelectEnd: storeResults, aspectRatio: '1:1', zIndex: '101'  <% unless @x1.nil? %> ,x1: <%= @x1 %>, y1: <%= @y1 %>, x2: <%= @x2 %>, y2: <%= @y2 %> <% end %> })", 250); 
+        })
+
+  function preview(img, selection) {
+    var scaleX = 50 / (selection.width || 1);
+    var scaleY = 50 / (selection.height || 1);
+
+    $('#preview img').css({
+      width: Math.round(scaleX * <%= @photo_width %>) + 'px',
+      height: Math.round(scaleY * <%= @photo_height %>) + 'px',
+      marginLeft: '-' + Math.round(scaleX * selection.x1) + 'px',
+      marginTop: '-' + Math.round(scaleY * selection.y1) + 'px'
+    });
+  }
+</script>

@@ -29,7 +29,12 @@ NasGui::Application.routes.draw do
     end
   end
 
-  resources :tags
+  resources :tags do
+    member do
+      get 'thumbnail'
+      get 'display_thumbnail'
+    end
+  end
 
   # Sample resource route with options:
   #   resources :products do
