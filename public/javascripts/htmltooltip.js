@@ -38,7 +38,7 @@ var htmltooltip={
 	},
 
 	updateanchordimensions:function($){
-		var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]')
+		var $anchors=$('*[rel="'+htmltooltip.tipclass+'"]')
 		$anchors.each(function(index){
 			this.dimensions={w:this.offsetWidth, h:this.offsetHeight, offsetx:$(this).offset().left, offsety:$(this).offset().top}
 		})
@@ -47,7 +47,6 @@ var htmltooltip={
 	render:function(){
 		jQuery(document).ready(function($){
 			htmltooltip.iebody=(document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
-			//var $anchors=$('*[@rel="'+htmltooltip.tipclass+'"]')
       var $anchors=$('*[rel="' + htmltooltip.tipclass + '"]')
 			var $tooltips=$('div[class="'+htmltooltip.tipclass+'"]')
 			$anchors.each(function(index){ //find all links with "title=htmltooltip" declaration
