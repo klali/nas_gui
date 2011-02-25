@@ -35,12 +35,12 @@
   </table>
 
   <div id="tags">
-    <%= render_tree Tag.arrange do |node, child| %>
-      <li class="tag">
+    <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
+      <li class="tag" id="tag_<%= node.id %>">
       <% rel = "" %>
       <% unless node.thumbnail.nil? %>
         <% rel = "rel='htmltooltip'" %>
-      <% end %> 
+      <% end %>
       <div class="tag_inner" <%= rel %>>
         <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
         <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
@@ -51,12 +51,13 @@
           <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
         </div>
       <% end %>
-      </li>
       <%= child %>
+      </li>
     <% end %>
     <%= submit_tag "filter" %>
     <%= submit_tag "assign" %>
     <%= submit_tag "remove" %>
+    <button id="saveListButton">Save List</button>
     <br/>
     <%= link_to("New tag", :controller => :tags, :action => 'new') %>
   </div>

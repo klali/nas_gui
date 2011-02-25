@@ -44,7 +44,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       if @tag.save
-        format.html { redirect_to(:controller => :photos, :notice => 'Tag was successfully created.') }
+        format.html { redirect_to({:controller => :photos}, {:notice => 'Tag was successfully created.'}) }
         format.xml  { render :xml => @tag, :status => :created, :location => @tag }
       else
         format.html { render :action => "new" }
@@ -60,7 +60,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       if @tag.update_attributes(params[:tag])
-        format.html { redirect_to(:controller => :photos, :notice => 'Tag was successfully updated.') }
+        format.html { redirect_to({:controller => :photos}, {:notice => "Tag '#{@tag.name}' was successfully updated."})}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -114,5 +114,28 @@ class TagsController < ApplicationController
               :type => "image/jpeg",
               :filename => "thumb_#{tag.name}",
               :disposition => 'inline')
+  end
+
+  def save_list
+    list = params[:tag]
+    last_root = nil;
+    list.each do |tmp_tag|
+      tag_id = tmp_tag.split('.')[0]
+      tag = Tag.find tag_id
+      parent_id = tmp_tag.split('.')[1]
+      unless(parent_id.eql?("root"))
+        parent = Tag.find parent_id
+        tag.move_to_child_of parent
+      else
+        tag.move_to_root
+        unless(last_root.nil?)
+          tag.move_to_right_of last_root
+        end
+        last_root = tag
+      end
+    end
+    respond_to do |format|
+      format.html { redirect_to({:controller => :photos}, {:notice => "Saved tag list"}) }
+    end
   end
 end

@@ -34,6 +34,9 @@ NasGui::Application.routes.draw do
       get 'thumbnail'
       get 'display_thumbnail'
     end
+    collection do
+      post 'save_list'
+    end
   end
 
   # Sample resource route with options:
