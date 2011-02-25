@@ -71,6 +71,6 @@ div.htmltooltip{
   border: 5px solid black;
   color: white;
   padding: 3px;
-  width: 50px; /*width of tooltip*/
-  height: 50px;
+  width: 75px;
+  height: 75px;
 }

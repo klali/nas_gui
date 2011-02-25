@@ -22,9 +22,9 @@
     <tr>
       <td></td>
       <td>
-        <div class="frame" style="width: 50px; height: 50px;">
-          <div id="preview" style="width: 50px; height: 50px; overflow: hidden;">
-            <%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "50px", :height => "50px" %>
+        <div class="frame" style="width: 75px; height: 75px;">
+          <div id="preview" style="width: 75px; height: 75px; overflow: hidden;">
+            <%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "75px", :height => "75px" %>
           </div>
         </div>
       </td>
@@ -50,11 +50,17 @@
 <script type="text/javascript">
   $(document).ready(function($) {
       setTimeout(" $('img#crop_photo').imgAreaSelect({ handles: true, onSelectChange: preview, onSelectEnd: storeResults, aspectRatio: '1:1', zIndex: '101'  <% unless @x1.nil? %> ,x1: <%= @x1 %>, y1: <%= @y1 %>, x2: <%= @x2 %>, y2: <%= @y2 %> <% end %> })", 250); 
+        <% unless @x1.nil? %>
+          var selection = {x1: <%=@x1%>,y1: <%=@y1%>,
+            x2: <%=@x2%>, y2:<%=@y2%>, width: <%=@x2 - @x1%>,
+            height: <%=@y2 - @y1%>};
+          preview("", selection);
+        <% end %>
         })
 
   function preview(img, selection) {
-    var scaleX = 50 / (selection.width || 1);
-    var scaleY = 50 / (selection.height || 1);
+    var scaleX = 75 / (selection.width || 1);
+    var scaleY = 75 / (selection.height || 1);
 
     $('#preview img').css({
       width: Math.round(scaleX * <%= @photo_width %>) + 'px',

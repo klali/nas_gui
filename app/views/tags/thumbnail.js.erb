@@ -11,7 +11,7 @@ $('#photo').html('<%= image_tag("/photos/#{@photo.id}/mediumimage", :border => 0
   $('#next_photo').html('<%= link_to(image_tag("/photos/#{@next_photo.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
 
-$('#preview').html('<%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "50px", :height => "50px" %>');
+$('#preview').html('<%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "75px", :height => "75px" %>');
 $('input#temp_thumb_id').val(<%= @photo.id %>);
 $('input#temp_thumb_width').val('');
 $('input#temp_thumb_height').val('');
@@ -23,8 +23,8 @@ $('img#crop_photo').imgAreaSelect({ handles: true, onSelectChange: preview, onSe
 $('#saveButton').attr('disabled', true);
 
 function preview(img, selection) {
-  var scaleX = 50 / (selection.width || 1);
-  var scaleY = 50 / (selection.height || 1);
+  var scaleX = 75 / (selection.width || 1);
+  var scaleY = 75 / (selection.height || 1);
 
   $('#preview img').css({
     width: Math.round(scaleX * <%= @photo_width %>) + 'px',
