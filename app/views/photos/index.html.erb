@@ -15,7 +15,7 @@
             <div class="thumbnail_inner">
             <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
-              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter + 1, :id => "pic_#{photo.id}" %>
+              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter += 1, :id => "pic_#{photo.id}" %>
               <span class="thumb_tags" title="<%= photo.display_tags %>">
                 <% trail = "" %>
                 <% trail = "..." if photo.display_tags.size > 17 %>
@@ -27,7 +27,6 @@
             </div>
           </div>
           </td>
-        <% counter += 1 %>
         <% if counter % 6 == 0 || counter == @photos.count %>
         </tr>
       <% end %>
@@ -42,7 +41,9 @@
           <% rel = "rel='htmltooltip'" %>
         <% end %>
         <div class="tag_inner" <%= rel %>>
-          <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
+          <% unless node.photos.empty? %>
+            <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true, :tabindex => counter += 1 %>
+          <% end %>
           <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
           <%= "(#{node.photos.count})" %>
         </div>
