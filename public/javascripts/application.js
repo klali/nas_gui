@@ -19,7 +19,6 @@ $(document).ready(function($) {
     $('#saveListButton').click(function(){
       var mylist = $('ul.sortable').nestedSortable('serialize');
       $.post("/tags/save_list", mylist);
-      //alert(mylist);
       return false;
     });
 });
