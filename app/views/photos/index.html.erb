@@ -37,21 +37,21 @@
   <div id="tags">
     <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
       <li class="tag" id="tag_<%= node.id %>">
-      <% rel = "" %>
-      <% unless node.thumbnail.nil? %>
-        <% rel = "rel='htmltooltip'" %>
-      <% end %>
-      <div class="tag_inner" <%= rel %>>
-        <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
-        <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-        <%= "(#{node.photos.count})" %>
-      </div>
-      <% unless node.thumbnail.nil? %>
-        <div class="htmltooltip">
-          <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
+        <% rel = "" %>
+        <% unless node.thumbnail.nil? %>
+          <% rel = "rel='htmltooltip'" %>
+        <% end %>
+        <div class="tag_inner" <%= rel %>>
+          <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true %>
+          <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
+          <%= "(#{node.photos.count})" %>
         </div>
-      <% end %>
-      <%= child %>
+        <% unless node.thumbnail.nil? %>
+          <div class="htmltooltip">
+            <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
+          </div>
+        <% end %>
+        <%= child %>
       </li>
     <% end %>
     <%= submit_tag "filter" %>

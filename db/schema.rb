@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110224085517) do
+ActiveRecord::Schema.define(:version => 20110225140740) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20110224085517) do
     t.string   "path"
     t.boolean  "deleted",    :default => false
     t.datetime "taken_at"
+    t.float    "stars"
   end
 
   add_index "photos", ["deleted"], :name => "index_photos_on_deleted"

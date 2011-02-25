@@ -10,4 +10,18 @@ $('#photo').html('<%= link_to(image_tag("/photos/#{@photo.id}/mediumimage", :bor
   $('#next').html('<%= link_to(image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
 $('#footer').html('<%= @photo.display_tags %><br/><%= @photo.taken_at %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
+$('#stars').html('<div id="stars"></div>');
+
+$(function() {
+    $('#stars').raty({
+      half: true,
+      <% unless @photo.stars.nil? %>
+        start: <%= @photo.stars %>,
+      <% end %>
+      click: function(score) {
+        $.get("/photos/<%=@photo.id%>/stars", {stars: score})
+      }
+    });
+  })
+
 jQuery(document).trigger('reveal.facebox');

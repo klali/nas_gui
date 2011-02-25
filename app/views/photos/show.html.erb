@@ -30,3 +30,18 @@
   <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %>
   <%= link_to "Edit", :action => :edit, :id => @photo.id %>
 </div>
+<div id="stars"></div>
+
+<script type="text/javascript">
+  $(function() {
+      $('#stars').raty({
+        half: true,
+        <% unless @photo.stars.nil? %>
+          start: <%= @photo.stars %>,
+        <% end %>
+        click: function(score) {
+          $.get("/photos/<%=@photo.id%>/stars", {stars: score})
+          }
+        });
+      })
+</script>

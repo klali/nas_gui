@@ -153,4 +153,14 @@ class PhotosController < ApplicationController
       format.html { redirect_to({:action => :index, :modal => photo.id}, {:notice => "Photo successfully rotated."}) }
     end
   end
+
+  def stars
+    @photo = Photo.find(params[:id])
+    stars = params[:stars]
+    @photo.stars = stars
+    @photo.save
+    respond_to do |format|
+      format.js
+    end
+  end
 end
