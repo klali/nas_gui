@@ -15,6 +15,7 @@ $('#stars').html('<div id="stars"></div>');
 $(function() {
     $('#stars').raty({
       half: true,
+      path: "/images/",
       <% unless @photo.stars.nil? %>
         start: <%= @photo.stars %>,
       <% end %>

@@ -141,7 +141,7 @@
 		hintList:		['bad', 'poor', 'regular', 'good', 'gorgeous'],
 		noRatedMsg:		'not rated yet',
 		number:			5,
-		path:			'/images/',
+		path:			'img/',
 		iconRange:		[],
 		readOnly:		false,
 		scoreName:		'score',

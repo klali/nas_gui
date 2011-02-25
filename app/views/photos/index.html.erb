@@ -43,6 +43,8 @@
         <div class="tag_inner" <%= rel %>>
           <% unless node.photos.empty? %>
             <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true, :tabindex => counter += 1 %>
+          <% else %>
+            <%= "&nbsp;".html_safe * 4 %>
           <% end %>
           <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
           <%= "(#{node.photos.count})" %>
