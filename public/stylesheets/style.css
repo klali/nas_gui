@@ -68,7 +68,7 @@ div.htmltooltip{
   left: -1000px;
   top: -1000px;
   background: #272727;
-  border: 10px solid black;
+  border: 5px solid black;
   color: white;
   padding: 3px;
   width: 50px; /*width of tooltip*/
