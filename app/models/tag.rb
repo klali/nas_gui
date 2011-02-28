@@ -47,6 +47,7 @@ class Tag < ActiveRecord::Base
     image = Image.from_blob(Photo.find(thumb_id).medium_image.image).first
     temp_thumb = image.crop(thumb_x1, thumb_y1, thumb_width, thumb_height)
     temp_thumb.scale!(75,75)
+    temp_thumb.strip!
     thumb = Thumbnail.find_or_create_by_tag_id id
     thumb.image = temp_thumb.to_blob { self.quality = 50 }
     thumb.tag_id = id

@@ -82,7 +82,9 @@ class Photo < ActiveRecord::Base
     if(factor == 0)
       raise "Failed to scale image"
     end
-    return image.resize(image.columns / factor, image.rows / factor)
+    scaled = image.resize(image.columns / factor, image.rows / factor)
+    scaled.strip!
+    scaled
   end
 
   def self.parse_exif_date(date)
