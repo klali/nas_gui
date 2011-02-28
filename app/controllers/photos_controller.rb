@@ -163,4 +163,12 @@ class PhotosController < ApplicationController
       format.js
     end
   end
+
+  def histogram
+    tags = session[:tags] || []
+    send_data(Photo.get_histogram(tags).to_blob,
+               :type => "image/png",
+               :filename => "histogram",
+               :disposition => 'inline')
+  end
 end

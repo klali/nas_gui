@@ -27,6 +27,7 @@ NasGui::Application.routes.draw do
     collection do
       get 'rescan'
       post 'filter_tags'
+      get 'histogram'
     end
   end
 

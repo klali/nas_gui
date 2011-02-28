@@ -2,8 +2,11 @@
 
 <div id="container">
   <p id="notice"><%= notice %></p>
-  <p>Displaying <%= @count %> photos</p>
+  <p><%= page_entries_info @photos %>
 
+  <div class="histogram">
+    <%= image_tag("/photos/histogram") %>
+  </div>
   <%= form_tag('/photos/filter_tags') %>
   <table id="photos">
     <% counter = 0 %>

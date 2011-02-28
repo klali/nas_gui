@@ -82,3 +82,8 @@ div#footer {
 div#stars {
   float: right;
 }
+
+div.histogram {
+  width: 75%;
+  text-align: center;
+}
