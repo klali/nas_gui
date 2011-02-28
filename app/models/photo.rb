@@ -196,7 +196,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.find_by_sql("select * from photos where taken_at #{symbol} '#{taken_at}' and deleted = false order by taken_at #{sort} limit 1").first
     else
-      join = join_for_tags(tags)
+      join = Photo.join_for_tags(tags)
       photo = Photo.find_by_sql("select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false and p.taken_at #{symbol} '#{taken_at}' group by p.id having count(pt_group.photo_id) >= #{tags.count} order by p.taken_at #{sort} limit 1").first
     end
     photo
