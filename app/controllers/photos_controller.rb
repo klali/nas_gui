@@ -170,7 +170,8 @@ class PhotosController < ApplicationController
     tags = session[:tags] || []
     sort = session[:sort] || "desc"
     slice = params[:slice] || 1
-    send_data(Photo.get_histogram(tags, sort, slice.to_i),
+    current = params[:current] || false
+    send_data(Photo.get_histogram(tags, sort, slice.to_i, current),
                :type => "image/png",
                :filename => "histogram" + tags.join('_') + "_#{slice}",
                :disposition => 'inline')

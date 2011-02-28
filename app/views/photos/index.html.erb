@@ -6,9 +6,17 @@
 
   <div class="histogram">
     <% count = 0 %>
-    <% @histogram_data.each do |histogram| %>
+    <% next_current = false %>
+    <% for histogram in 0..(@histogram_data.count - 1) %>
       <div class="histogram_i">
-        <%= link_to(image_tag("/photos/histogram?slice=#{count}", :border => 0), :action => :index, :page => histogram) %>
+        <% current = false %>
+        <% if session[:page].to_i == @histogram_data[histogram] || next_current == true %>
+          <% current = true %>
+          <% next_current = false %>
+        <% elsif session[:page].to_i < @histogram_data[histogram] && @histogram_data[histogram + 1] && session[:page].to_i > @histogram_data[histogram + 1].to_i %>
+          <% next_current = true %>
+        <% end %>
+        <%= link_to(image_tag("/photos/histogram?slice=#{count}&current=#{current}", :border => 0), :action => :index, :page => @histogram_data[histogram]) %>
         <% count += 1 %>
       </div>
     <% end %>

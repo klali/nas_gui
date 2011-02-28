@@ -275,7 +275,7 @@ class Photo < ActiveRecord::Base
     end
   end
 
-  def self.get_histogram(tags = [], sort = "desc", slice = 0)
+  def self.get_histogram(tags = [], sort = "desc", slice = 0, current = false)
     if(!sort.eql?("desc") && !sort.eql?("asc"))
       sort = "desc"
     end
@@ -323,7 +323,11 @@ class Photo < ActiveRecord::Base
               self.format = 'png'
             }
             gc = Draw.new
-            gc.stroke('black')
+            if(current == "true")
+              gc.stroke('green')
+            else
+              gc.stroke('black')
+            end
             gc.stroke_width(each_width / 2)
             count = 0
             if(month_data[year][month])
