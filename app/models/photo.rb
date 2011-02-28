@@ -213,7 +213,7 @@ class Photo < ActiveRecord::Base
       raw_months_data = connection.execute("select count(id),date_format(taken_at, '%Y-%m') as taken_month from photos where deleted = false group by taken_month")
     else
       join = join_for_tags(tags)
-      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false group by p.id having count(pt_group.photo_id) >= #{tags.count}) as p2 group by taken_month")
+      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select p.id,p.taken_at from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false group by p.id having count(pt_group.photo_id) >= #{tags.count}) as p2 group by taken_month")
     end
     while(data = raw_months_data.fetch_row)
       count,date = data
@@ -240,7 +240,7 @@ class Photo < ActiveRecord::Base
   def self.get_histogram(tags = [])
     month_data,meta = get_raw_histogram(tags)
     height = 100.0
-    width = 800.0
+    width = 900.0
     factor = meta[:max_count] / height
     each_width = width / meta[:num_counts]
 
@@ -248,7 +248,7 @@ class Photo < ActiveRecord::Base
     imgl.new_image(width + 50, height + 50)
     gc = Draw.new
     gc.stroke('black')
-    gc.stroke_width(each_width)
+    gc.stroke_width(each_width / 2)
     x_position = 25
     y_position = 125
     for year in meta[:first_year]..meta[:last_year]
@@ -261,8 +261,6 @@ class Photo < ActiveRecord::Base
         last_lmonth = meta[:last_month]
       end
       for month in first_lmonth..last_lmonth
-        gc.stroke('black')
-        gc.stroke_width(each_width / 2)
         count = 0
         if(month_data[year][month])
           count = month_data[year][month]
