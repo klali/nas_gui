@@ -67,13 +67,13 @@ class Photo < ActiveRecord::Base
 
   def thumbnail=(image)
     thumb = Thumbnail.find_or_create_by_photo_id id
-    thumb.image = image
+    thumb.image = image.to_blob { self.quality = 50 }
     thumb.save
   end
 
   def medium_image=(image)
     medium = MediumImage.find_or_create_by_photo_id id
-    medium.image = image
+    medium.image = image.to_blob { self.quality = 75 }
     medium.save
   end
 
@@ -82,7 +82,7 @@ class Photo < ActiveRecord::Base
     if(factor == 0)
       raise "Failed to scale image"
     end
-    return image.thumbnail(image.columns / factor, image.rows / factor).to_blob
+    return image.resize(image.columns / factor, image.rows / factor)
   end
 
   def self.parse_exif_date(date)
@@ -278,16 +278,6 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     month_data,meta = get_raw_histogram(tags)
-    height = 100.0
-    width = 900.0
-    factor = meta[:max_count] / height
-    each_width = width / meta[:num_counts]
-    images = []
-
-    x_position = each_width / 2
-    y_position = 125
-    slice_count = 0
-
     for year in meta[:first_year]..meta[:last_year]
       first_lmonth = 1
       last_lmonth = 12
@@ -298,31 +288,61 @@ class Photo < ActiveRecord::Base
         last_lmonth = meta[:last_month]
       end
       for month in first_lmonth..last_lmonth
-        image = nil
-        puts "#{slice_count} #{slice}"
-        if(slice_count == slice)
-          image = Image.new(each_width, height + 50) {
-            self.format = 'png'
-          }
-          gc = Draw.new
-          gc.stroke('black')
-          gc.stroke_width(each_width / 2)
-          count = 0
-          if(month_data[year][month])
-            count = month_data[year][month]
-          end
-          offset = count / factor
-          gc.line(x_position, y_position, x_position, y_position - offset)
-          gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset, "#{count}") do
-            self.pointsize = [each_width / 4, 30].min
-          end
-          gc.annotate(image, each_width, 20, x_position - each_width / 3, y_position + 20, "#{year}-#{month}") do
-            self.pointsize = [each_width / 5, 25].min
-          end
-          gc.draw(image)
+        unless month_data[year][month]
+          meta[:num_counts] += 1
         end
-        images.push image
-        slice_count += 1
+      end
+    end
+
+    height = 100.0
+    width = 900.0
+    factor = meta[:max_count] / height
+    each_width = width / meta[:num_counts]
+    puts "#{each_width} #{meta[:num_counts]}"
+    images = []
+
+    x_position = each_width / 2
+    y_position = 125
+    slice_count = 0
+
+    catch :break do
+      for year in meta[:first_year]..meta[:last_year]
+        first_lmonth = 1
+        last_lmonth = 12
+        if(year.eql?meta[:first_year])
+          first_lmonth = meta[:first_month]
+        end
+        if(year.eql?meta[:last_year])
+          last_lmonth = meta[:last_month]
+        end
+        for month in first_lmonth..last_lmonth
+          if(slice_count == slice)
+            image = Image.new(each_width, height + 50) {
+              self.format = 'png'
+            }
+            gc = Draw.new
+            gc.stroke('black')
+            gc.stroke_width(each_width / 2)
+            count = 0
+            if(month_data[year][month])
+              count = month_data[year][month]
+            end
+            offset = count / factor
+            gc.line(x_position, y_position, x_position, y_position - offset)
+            gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset, "#{count}") do
+              self.pointsize = [each_width / 4, 30].min
+            end
+            gc.annotate(image, each_width, 20, x_position - each_width / 3, y_position + 20, "#{year}-#{month}") do
+              self.pointsize = [each_width / 5, 25].min
+            end
+            gc.draw(image)
+            images.push image
+            throw :break
+          else
+            images.push nil
+            slice_count += 1
+          end
+        end
       end
     end
     return images[slice].to_blob
