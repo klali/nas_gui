@@ -236,6 +236,24 @@ class Photo < ActiveRecord::Base
       max_count = [max_count, count].max
       num_counts += 1
     end
+
+    for year in first_year..last_year
+      first_lmonth = 1
+      last_lmonth = 12
+      if(year.eql?first_year)
+        first_lmonth = first_month
+      end
+      if(year.eql?last_year)
+        last_lmonth = last_month
+      end
+      for month in first_lmonth..last_lmonth
+        unless month_data[year][month]
+          num_counts += 1
+          month_data[year][month] = 0
+        end
+      end
+    end
+
     return [month_data, {:first_year => first_year, :first_month => first_month, :last_year => last_year, :last_month => last_month, :max_count => max_count, :num_counts => num_counts}]
   end
 
@@ -252,10 +270,7 @@ class Photo < ActiveRecord::Base
         last_lmonth = meta[:last_month]
       end
       for month in first_lmonth..last_lmonth
-        count = 0
-        if(month_data[year][month])
-          count = month_data[year][month]
-        end
+        count = month_data[year][month]
         data.push count
       end
     end
@@ -280,21 +295,6 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     month_data,meta = get_raw_histogram(tags)
-    for year in meta[:first_year]..meta[:last_year]
-      first_lmonth = 1
-      last_lmonth = 12
-      if(year.eql?meta[:first_year])
-        first_lmonth = meta[:first_month]
-      end
-      if(year.eql?meta[:last_year])
-        last_lmonth = meta[:last_month]
-      end
-      for month in first_lmonth..last_lmonth
-        unless month_data[year][month]
-          meta[:num_counts] += 1
-        end
-      end
-    end
 
     height = 100.0
     width = 900.0
@@ -329,10 +329,7 @@ class Photo < ActiveRecord::Base
               gc.stroke('black')
             end
             gc.stroke_width(each_width / 2)
-            count = 0
-            if(month_data[year][month])
-              count = month_data[year][month]
-            end
+            count = month_data[year][month]
             offset = count / factor
             gc.line(x_position, y_position, x_position, y_position - offset)
             gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset, "#{count}") do
