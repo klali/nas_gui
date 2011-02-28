@@ -84,6 +84,9 @@ div#stars {
 }
 
 div.histogram {
-  width: 75%;
-  text-align: center;
+  float: left;
+}
+
+div.histogram_i {
+  float: left;
 }

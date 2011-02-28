@@ -237,20 +237,9 @@ class Photo < ActiveRecord::Base
     return [month_data, {:first_year => first_year, :first_month => first_month, :last_year => last_year, :last_month => last_month, :max_count => max_count, :num_counts => num_counts}]
   end
 
-  def self.get_histogram(tags = [])
+  def self.get_histogram_data(tags = [], sort = "desc")
     month_data,meta = get_raw_histogram(tags)
-    height = 100.0
-    width = 900.0
-    factor = meta[:max_count] / height
-    each_width = width / meta[:num_counts]
-
-    imgl = ImageList.new
-    imgl.new_image(width + 50, height + 50)
-    gc = Draw.new
-    gc.stroke('black')
-    gc.stroke_width(each_width / 2)
-    x_position = 25
-    y_position = 125
+    data = []
     for year in meta[:first_year]..meta[:last_year]
       first_lmonth = 1
       last_lmonth = 12
@@ -265,20 +254,77 @@ class Photo < ActiveRecord::Base
         if(month_data[year][month])
           count = month_data[year][month]
         end
-        offset = count / factor
-        gc.line(x_position, y_position, x_position, y_position - offset)
-        gc.annotate(imgl, each_width, 20, x_position - 10, y_position - offset, "#{count}") do
-          self.pointsize = [each_width / 4, 30].min
-        end
-        gc.annotate(imgl, each_width, 20, x_position - 10, y_position + 20, "#{year}-#{month}") do
-          self.pointsize = [each_width / 5, 25].min
-        end
-        x_position += each_width
+        data.push count
       end
     end
-    gc.draw(imgl)
-    image = imgl.first
-    image.format = "png"
-    image
+    tmp_data = []
+    page = 1.0
+    if(sort.eql?"desc")
+      data = data.reverse
+    end
+    data.each do |data_i|
+      tmp_data.push(page.to_i)
+      page += data_i.to_f / per_page.to_f
+    end
+    if(sort.eql?'desc')
+      return tmp_data.reverse
+    else
+      return tmp_data
+    end
+  end
+
+  def self.get_histogram(tags = [], sort = "desc", slice = 0)
+    if(!sort.eql?("desc") && !sort.eql?("asc"))
+      sort = "desc"
+    end
+    month_data,meta = get_raw_histogram(tags)
+    height = 100.0
+    width = 900.0
+    factor = meta[:max_count] / height
+    each_width = width / meta[:num_counts]
+    images = []
+
+    x_position = each_width / 2
+    y_position = 125
+    slice_count = 0
+
+    for year in meta[:first_year]..meta[:last_year]
+      first_lmonth = 1
+      last_lmonth = 12
+      if(year.eql?meta[:first_year])
+        first_lmonth = meta[:first_month]
+      end
+      if(year.eql?meta[:last_year])
+        last_lmonth = meta[:last_month]
+      end
+      for month in first_lmonth..last_lmonth
+        image = nil
+        puts "#{slice_count} #{slice}"
+        if(slice_count == slice)
+          image = Image.new(each_width, height + 50) {
+            self.format = 'png'
+          }
+          gc = Draw.new
+          gc.stroke('black')
+          gc.stroke_width(each_width / 2)
+          count = 0
+          if(month_data[year][month])
+            count = month_data[year][month]
+          end
+          offset = count / factor
+          gc.line(x_position, y_position, x_position, y_position - offset)
+          gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset, "#{count}") do
+            self.pointsize = [each_width / 4, 30].min
+          end
+          gc.annotate(image, each_width, 20, x_position - each_width / 3, y_position + 20, "#{year}-#{month}") do
+            self.pointsize = [each_width / 5, 25].min
+          end
+          gc.draw(image)
+        end
+        images.push image
+        slice_count += 1
+      end
+    end
+    return images[slice].to_blob
   end
 end

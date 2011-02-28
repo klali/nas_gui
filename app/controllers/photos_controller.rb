@@ -20,6 +20,8 @@ class PhotosController < ApplicationController
       @photos = Photo.get_pagination(1, @selected_tags, @sort).first
     end
 
+    @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @photos }
@@ -166,9 +168,11 @@ class PhotosController < ApplicationController
 
   def histogram
     tags = session[:tags] || []
-    send_data(Photo.get_histogram(tags).to_blob,
+    sort = session[:sort] || "desc"
+    slice = params[:slice] || 1
+    send_data(Photo.get_histogram(tags, sort, slice.to_i),
                :type => "image/png",
-               :filename => "histogram" + tags.join('_'),
+               :filename => "histogram" + tags.join('_') + "_#{slice}",
                :disposition => 'inline')
   end
 end

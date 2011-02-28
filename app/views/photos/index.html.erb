@@ -5,7 +5,13 @@
   <p><%= page_entries_info @photos %>
 
   <div class="histogram">
-    <%= image_tag("/photos/histogram") %>
+    <% count = 0 %>
+    <% @histogram_data.each do |histogram| %>
+      <div class="histogram_i">
+        <%= link_to(image_tag("/photos/histogram?slice=#{count}", :border => 0), :action => :index, :page => histogram) %>
+        <% count += 1 %>
+      </div>
+    <% end %>
   </div>
   <%= form_tag('/photos/filter_tags') %>
   <table id="photos">
