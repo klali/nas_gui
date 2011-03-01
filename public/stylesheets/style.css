@@ -84,9 +84,33 @@ div#stars {
 }
 
 div.histogram {
+  position: relative;
+  height: 165px;
+  width: 75%;
+  overflow: auto;
+}
+ul.histogram {
+  display: block;
+  height: 150px;
+  width: 5000px;
+  padding-bottom: 15px;
+  margin: 0;
+  list-style: none;
+}
+.histogram li {
+  display: block;
   float: left;
 }
-
-div.histogram_i {
-  float: left;
+.histogram a {
+  display: block;
+  text-decoration: none;
+}
+.histogram a img {
+  border: 3px #fff solid;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+.histogram a:hover img {
+  filter:alpha(opacity=50);50
+  opacity: 0.5;
 }
