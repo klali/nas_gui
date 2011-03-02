@@ -324,9 +324,9 @@ class Photo < ActiveRecord::Base
             }
             gc = Draw.new
             if(current == "true")
-              gc.stroke('green')
+              gc.stroke('green2')
             else
-              gc.stroke('black')
+              gc.stroke('gray40')
             end
             gc.stroke_width(each_width / 2)
             count = month_data[year][month]
