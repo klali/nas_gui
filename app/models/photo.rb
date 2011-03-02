@@ -332,7 +332,7 @@ class Photo < ActiveRecord::Base
             count = month_data[year][month]
             offset = count / factor
             gc.line(x_position, y_position, x_position, y_position - offset)
-            gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset, "#{count}") do
+            gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
               self.pointsize = [each_width / 4, 30].min
             end
             gc.annotate(image, each_width, 20, x_position - each_width / 3, y_position + 20, "#{year}-#{month}") do
