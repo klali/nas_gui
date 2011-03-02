@@ -41,6 +41,8 @@ NasGui::Application.routes.draw do
     end
   end
 
+  resources :configurations
+
   # Sample resource route with options:
   #   resources :products do
   #     member do
