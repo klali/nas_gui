@@ -23,6 +23,7 @@ div#rotate_left {
 .thumbnail {
   text-align: center;
   padding: 0;
+  width: 12%;
 }
 
 li.tag {
