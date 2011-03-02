@@ -290,10 +290,7 @@ class Photo < ActiveRecord::Base
     end
   end
 
-  def self.get_histogram(tags = [], sort = "desc", slice = 0, current = false)
-    if(!sort.eql?("desc") && !sort.eql?("asc"))
-      sort = "desc"
-    end
+  def self.get_histogram(tags = [], slice = 0, current = false)
     month_data,meta = get_raw_histogram(tags)
 
     height = 100.0
