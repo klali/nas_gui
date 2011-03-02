@@ -4,17 +4,23 @@
   <p id="notice"><%= notice %></p>
   <p><%= page_entries_info @photos %>
 
-  <div class="histogram">
-    <ul class="histogram">
-      <% count = 0 %>
-      <% for histogram in 0..(@histogram_data.count - 1) %>
-        <li>
-        <%= link_to(image_tag("/photos/histogram?slice=#{count}", :border => 0), :action => :index, :page => @histogram_data[histogram]) %>
+  <% if @histogram_data.count > 2 %>
+    <div class="histogram">
+      <ul class="histogram">
+        <% count = 0 %>
+        <% for histogram in 0..(@histogram_data.count - 1) %>
+          <% current = false %>
+          <% if histogram == @current_hist %>
+            <% current = true %>
+          <% end %>
+          <li>
+          <%= link_to(image_tag("/photos/histogram?slice=#{count}&current=#{current}", :border => 0, :title => "jump to page #{@histogram_data[histogram]}"), :action => :index, :page => @histogram_data[histogram]) %>
           <% count += 1 %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%= form_tag('/photos/filter_tags') %>
   <table id="photos">
     <% counter = 0 %>
@@ -97,22 +103,11 @@
   $(function(){
       //Get our elements for faster access and set overlay width
       var div = $('div.histogram'),
-      ul = $('ul.histogram'),
-      ulPadding = 15;
-
-      //Get menu width
+      ul = $('ul.histogram');
       var divWidth = div.width();
-
-      //Remove scrollbars
       div.css({overflow: 'hidden'});
-
-      //Find last image container
       var lastLi = ul.find('li:last-child');
-
-      //When user move mouse over menu
       div.mousemove(function(e){
-        //As images are loaded ul width increases,
-        //so we recalculate it each time
         var ulWidth = lastLi[0].offsetLeft + lastLi.outerWidth();
         var left = (e.pageX - div.offset().left) * (ulWidth-divWidth) / divWidth;
         div.scrollLeft(left);
@@ -120,8 +115,6 @@
   });
 
   <% unless @modal.nil? %>
-    //var foobarHeight = "<%= @photo_height %>";
-    //var foobarWidth = "<%= @photo_width %>";
     jQuery.facebox({ajax: "/photos/<%= @modal %>"})
   <% end %>
 </script>

@@ -2,7 +2,7 @@ class PhotosController < ApplicationController
   # GET /photos
   # GET /photos.xml
   def index
-    page = params[:page] || session[:page] || 1
+    page = (params[:page] || session[:page] || 1).to_i
     session[:page] = page
     @selected_tags = session[:tags] || []
     @sort = params[:sort] || session[:sort] || "desc"
@@ -21,6 +21,17 @@ class PhotosController < ApplicationController
     end
 
     @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
+    if @sort.eql?"asc"
+      @current_hist = @histogram_data.find_index page
+      if @current_hist.nil?
+        @current_hist = (@histogram_data + [page]).sort.find_index(page) - 1
+      end
+    else
+      @current_hist = @histogram_data.reverse.find_index page
+      if @current_hist.nil?
+        @current_hist = (@histogram_data + [page]).sort.reverse.find_index(page)
+      end
+    end
 
     respond_to do |format|
       format.html # index.html.erb
