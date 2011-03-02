@@ -22,12 +22,12 @@ class PhotosController < ApplicationController
 
     @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
     if @sort.eql?"asc"
-      @current_hist = @histogram_data.find_index page
+      @current_hist = @histogram_data.reverse.find_index page
       if @current_hist.nil?
         @current_hist = (@histogram_data + [page]).sort.find_index(page) - 1
       end
     else
-      @current_hist = @histogram_data.reverse.find_index page
+      @current_hist = @histogram_data.find_index page
       if @current_hist.nil?
         @current_hist = (@histogram_data + [page]).sort.reverse.find_index(page)
       end
