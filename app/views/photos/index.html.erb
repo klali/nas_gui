@@ -12,7 +12,7 @@
         <% if @current_hist.find_index histogram %>
           <% current = true %>
         <% end %>
-        <li>
+        <li <%= current ? "class='current'" : ""%>>
         <%= link_to(image_tag("/photos/histogram?slice=#{count}&current=#{current}", :border => 0, :title => "jump to page #{@histogram_data[histogram]}"), :action => :index, :page => @histogram_data[histogram]) %>
         <% count += 1 %>
         </li>
