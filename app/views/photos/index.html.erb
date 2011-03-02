@@ -37,7 +37,7 @@
                 <% trail = "" %>
                 <% trail = "..." if photo.display_tags.size > 17 %>
                 <label for="pic_<%= photo.id %>">
-                  <%= photo.display_tags.slice(0,17) + trail %><br/>
+                  <%= photo.display_tags.mb_chars.slice(0,17).to_s + trail %><br/>
                   <%= photo.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
                 </label>
               </span>
