@@ -21,15 +21,26 @@ class PhotosController < ApplicationController
     end
 
     @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
+    @current_hist = []
     if @sort.eql?"asc"
-      @current_hist = @histogram_data.reverse.find_index page
-      if @current_hist.nil?
-        @current_hist = (@histogram_data + [page]).sort.find_index(page) - 1
+      tmp_hist = @histogram_data.index page
+      if tmp_hist.nil?
+        @current_hist.push((@histogram_data + [page]).sort.find_index(page) - 1)
+      else
+        @current_hist.push tmp_hist
+        while @histogram_data[tmp_hist += 1] == page do
+          @current_hist.push tmp_hist
+        end
       end
     else
-      @current_hist = @histogram_data.find_index page
-      if @current_hist.nil?
-        @current_hist = (@histogram_data + [page]).sort.reverse.find_index(page)
+      tmp_hist = @histogram_data.find_index page
+      if tmp_hist.nil?
+        @current_hist.push((@histogram_data + [page]).sort.reverse.find_index(page))
+      else
+        @current_hist.push tmp_hist
+        while @histogram_data[tmp_hist += 1] == page do
+          @current_hist.push tmp_hist
+        end
       end
     end
 

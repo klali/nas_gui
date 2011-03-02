@@ -9,7 +9,7 @@
       <% count = 0 %>
       <% for histogram in 0..(@histogram_data.count - 1) %>
         <% current = false %>
-        <% if histogram == @current_hist %>
+        <% if @current_hist.find_index histogram %>
           <% current = true %>
         <% end %>
         <li>
