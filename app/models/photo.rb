@@ -299,7 +299,7 @@ class Photo < ActiveRecord::Base
     height = 100.0
     width = 900.0
     factor = meta[:max_count] / height
-    each_width = [width / meta[:num_counts], 50].max
+    each_width = [width / meta[:num_counts], 60].max
     puts "#{each_width} #{meta[:num_counts]}"
     images = []
 
@@ -335,7 +335,7 @@ class Photo < ActiveRecord::Base
             gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
               self.pointsize = [each_width / 4, 30].min
             end
-            gc.annotate(image, each_width, 20, x_position - each_width / 3, y_position + 20, "#{year}-#{month}") do
+            gc.annotate(image, each_width, 20, x_position - each_width / 2, y_position + 20, "#{year}-#{Date::ABBR_MONTHNAMES[month]}") do
               self.pointsize = [each_width / 5, 25].min
             end
             gc.draw(image)
