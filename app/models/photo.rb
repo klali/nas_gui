@@ -100,7 +100,10 @@ class Photo < ActiveRecord::Base
     i = Image.read(path).first
     i = i.rotate(angle)
     i.write(path)
-    image.reprocess!
+    file = File.open path
+    self.image = file
+    file.close
+    save
   end
 
   def self.get_pagination(page, tags, sort = "desc")
