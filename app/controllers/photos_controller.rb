@@ -126,7 +126,7 @@ class PhotosController < ApplicationController
   def image
     photo = Photo.find(params[:id])
     send_file(photo.path,
-              :type => image.mime_type,
+              :type => "image/jpeg",
               :x_sendfile => true,
               :filename => photo.name,
               :disposition => 'inline')
