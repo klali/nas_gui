@@ -4,7 +4,7 @@ include Magick
 class Tag < ActiveRecord::Base
   has_and_belongs_to_many :photos
   acts_as_nested_set
-  has_one :thumbnail
+  has_attached_file :thumbnail
 
   def get_first_photo
     Photo.find_by_sql("select p.* from photos p join photos_tags pt on pt.photo_id = p.id where pt.tag_id = #{id} order by p.taken_at desc limit 1").first
@@ -44,13 +44,15 @@ class Tag < ActiveRecord::Base
     if(thumb_id.nil? || thumb_width.nil? || thumb_height.nil? || thumb_x1.nil? || thumb_y1.nil?)
       return false
     end
-    image = Image.from_blob(Photo.find(thumb_id).medium_image.image).first
+    image = Image.read(Photo.find(thumb_id).image.path).first
     temp_thumb = image.crop(thumb_x1, thumb_y1, thumb_width, thumb_height)
     temp_thumb.scale!(75,75)
     temp_thumb.strip!
-    thumb = Thumbnail.find_or_create_by_tag_id id
-    thumb.image = temp_thumb.to_blob { self.quality = 50 }
-    thumb.tag_id = id
-    thumb.save
+    file = Tempfile.new('thumbnail')
+    file.write temp_thumb.to_blob { self.quality = 50 }
+    self.thumbnail = file
+    file.close
+    file.unlink
+    save
   end
 end

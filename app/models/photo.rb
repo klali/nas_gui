@@ -4,8 +4,11 @@ require 'find'
 
 class Photo < ActiveRecord::Base
   has_and_belongs_to_many :tags, :order => "lft asc"
-  has_one :thumbnail
-  has_one :medium_image
+  has_attached_file :image,
+    :styles => {
+    :original => '700x700>',
+    :thumbnail => '150x150>',
+  }
 
   def self.scan_directory
     scanned = 0
@@ -49,10 +52,9 @@ class Photo < ActiveRecord::Base
       p['taken_at'] = ex_date
     end
 
-    i = Image.read(file).first
+    i = File.open(file, 'rb')
+    p.image = i
     p.save
-    p.thumbnail = scale_by_pixels(i, 150.0)
-    p.medium_image = scale_by_pixels(i, 700.0)
     if(exif.orientation.eql? "Rotate 90 CW")
       exif.orientation = ""
       exif.save
@@ -63,44 +65,6 @@ class Photo < ActiveRecord::Base
       p.rotate "left"
     end
     p
-  end
-
-  def thumbnail=(image)
-    thumb = Thumbnail.find_or_create_by_photo_id id
-    thumb.image = image.to_blob { self.quality = 50 }
-    thumb.save
-  end
-
-  def medium_image=(image)
-    medium = MediumImage.find_or_create_by_photo_id id
-    medium.image = image.to_blob { self.quality = 75 }
-    medium.save
-  end
-
-  def self.scale_by_pixels(image, pixels)
-    factor = [image.columns, image.rows].max / pixels
-    if(factor == 0)
-      raise "Failed to scale image"
-    end
-    scaled = image.resize(image.columns / factor, image.rows / factor)
-    scaled.strip!
-    scaled
-  end
-
-  def self.parse_exif_date(date)
-    DateTime.strptime(date, "%Y:%m:%d %H:%M:%S")
-  end
-
-  def get_thumbnail
-    Image.from_blob(thumbnail.image).first
-  end
-
-  def get_image
-    Image.read(path).first
-  end
-
-  def get_mediumimage
-    Image.from_blob(medium_image.image).first
   end
 
   def taken_at=(date)
@@ -136,7 +100,7 @@ class Photo < ActiveRecord::Base
     i = Image.read(path).first
     i = i.rotate(angle)
     i.write(path)
-    Photo.add_or_update(path, true)
+    image.reprocess!
   end
 
   def self.get_pagination(page, tags, sort = "desc")

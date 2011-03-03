@@ -6,6 +6,7 @@ gem "rmagick"
 gem "mini_exiftool"
 gem "nested_set"
 gem 'jquery-rails', '>= 0.2.6'
+gem 'paperclip'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

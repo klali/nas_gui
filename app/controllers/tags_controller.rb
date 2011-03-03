@@ -110,8 +110,8 @@ class TagsController < ApplicationController
 
   def display_thumbnail
     tag = Tag.find(params[:id])
-    send_data(tag.thumbnail.image,
-              :type => "image/jpeg",
+    send_file(tag.thumbnail.path,
+             :type => tag.thumbnail_content_type,
               :filename => "thumb_#{tag.name}",
               :disposition => 'inline')
   end

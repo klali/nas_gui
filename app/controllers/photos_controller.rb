@@ -116,18 +116,17 @@ class PhotosController < ApplicationController
   # GET /photos/1/thumbnail
   def thumbnail
     photo = Photo.find(params[:id])
-    send_data(photo.thumbnail.image,
-               :type => "image/jpeg",
-               :filename => "thumb_#{photo.name}",
-               :disposition => 'inline')
+    send_file(photo.image.path(:thumbnail),
+              :type => photo.image_content_type,
+              :filename => "thumb_#{photo.name}",
+              :disposition => 'inline')
   end
 
   # GET /photos/1/image
   def image
     photo = Photo.find(params[:id])
     send_file(photo.path,
-              :type => "image/jpeg",
-              :x_sendfile => true,
+              :type => photo.image_content_type,
               :filename => photo.name,
               :disposition => 'inline')
   end
@@ -135,10 +134,10 @@ class PhotosController < ApplicationController
   # GET /photos/1/mediumimage
   def mediumimage
     photo = Photo.find(params[:id])
-    send_data(photo.medium_image.image,
-               :type => "image/jpeg",
-               :filename => "medium_#{photo.name}",
-               :disposition => 'inline')
+    send_file(photo.image.path,
+              :type => photo.image_content_type,
+              :filename => "medium_#{photo.name}",
+              :disposition => 'inline')
   end
 
   def slideshow
