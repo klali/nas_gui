@@ -2,7 +2,7 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 $(document).ready(function($) {
-    setTimeout("$('a[rel*=facebox]').facebox({ loadingImage : '/images/loading.gif', closeImage : '/images/closelabel.png' })", 150);
+    $('a[rel*=facebox]').facebox({ loadingImage : '/images/loading.gif', closeImage : '/images/closelabel.png' })
     $('ul.sortable').nestedSortable({
       listType: 'ul',
       disableNesting: 'no-nest',
@@ -24,7 +24,7 @@ $(document).ready(function($) {
 });
 
 $(document).bind('reveal.facebox', function() {
-    $('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))"
+    $('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))
     });
 
 $(document).bind('loading.facebox', function() {
