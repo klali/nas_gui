@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110303163119) do
+ActiveRecord::Schema.define(:version => 20110303181309) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -20,15 +20,6 @@ ActiveRecord::Schema.define(:version => 20110303163119) do
   end
 
   add_index "configurations", ["key"], :name => "index_configurations_on_key", :unique => true
-
-  create_table "medium_images", :force => true do |t|
-    t.integer  "photo_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.binary   "image",      :limit => 16777215
-  end
-
-  add_index "medium_images", ["photo_id"], :name => "index_medium_images_on_photo_id", :unique => true
 
   create_table "photos", :force => true do |t|
     t.string   "name"
@@ -74,16 +65,5 @@ ActiveRecord::Schema.define(:version => 20110303163119) do
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
-
-  create_table "thumbnails", :force => true do |t|
-    t.integer  "photo_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.binary   "image"
-    t.integer  "tag_id"
-  end
-
-  add_index "thumbnails", ["photo_id"], :name => "index_thumbnails_on_photo_id", :unique => true
-  add_index "thumbnails", ["tag_id"], :name => "index_thumbnails_on_tag_id", :unique => true
 
 end
