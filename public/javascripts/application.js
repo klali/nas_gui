@@ -24,7 +24,7 @@ $(document).ready(function($) {
 });
 
 $(document).bind('reveal.facebox', function() {
-    setTimeout("$('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))", 150);
+    $('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))"
     });
 
 $(document).bind('loading.facebox', function() {
