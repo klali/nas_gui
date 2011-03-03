@@ -125,11 +125,11 @@ class PhotosController < ApplicationController
   # GET /photos/1/image
   def image
     photo = Photo.find(params[:id])
-    image = photo.get_image
-    send_data(image.to_blob,
-               :type => image.mime_type,
-               :filename => photo.name,
-               :disposition => 'inline')
+    send_file(photo.path,
+              :type => image.mime_type,
+              :x_sendfile => true,
+              :filename => photo.name,
+              :disposition => 'inline')
   end
 
   # GET /photos/1/mediumimage
