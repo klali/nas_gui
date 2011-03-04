@@ -4,10 +4,16 @@ require 'find'
 
 class Photo < ActiveRecord::Base
   has_and_belongs_to_many :tags, :order => "lft asc"
-  has_attached_file :image,
-    :styles => {
-    :original => '700x700>',
-    :thumbnail => '150x150>',
+  has_attached_file :image, :styles => {
+    :original => {
+      :geometry => '700x700>',
+    },
+    :thumbnail => {
+      :geometry => '150x150>',
+    },
+  }, :convert_options => {
+    :original => ['-strip', '-quality 75'],
+    :thumbnail => ['-strip', '-quality 50']
   }
 
   def self.scan_directory
