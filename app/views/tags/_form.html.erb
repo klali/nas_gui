@@ -24,10 +24,10 @@
   </table>
   <% unless @tag.photos.empty? %>
     <div id="tag_thumbnail">
-      <% if @tag.thumbnail.nil? %>
-        <%= link_to("Add thumbnail", {:action => :thumbnail, :id => @tag.id}, {:rel => 'facebox'}) %>
-      <% else %>
+      <% if @tag.thumbnail? %>
         <%= link_to(image_tag("/tags/#{@tag.id}/display_thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @tag.thumb_id}, {:rel => 'facebox'}) %>
+      <% else %>
+        <%= link_to("Add thumbnail", {:action => :thumbnail, :id => @tag.id}, {:rel => 'facebox'}) %>
       <% end %>
     </div>
     <%= f.hidden_field(:thumb_id) %>

@@ -90,13 +90,13 @@ class TagsController < ApplicationController
     if(@photo.nil?)
       @photo ||= @tag.get_first_photo
     end
-    unless(@tag.thumbnail.nil?)
+    if(@tag.thumbnail?)
       @x1 = @tag.thumb_x1
       @y1 = @tag.thumb_y1
       @x2 = @tag.thumb_x1 + @tag.thumb_width
       @y2 = @tag.thumb_y1 + @tag.thumb_height
     end
-    mediumimage = @photo.get_mediumimage
+    mediumimage = Image.read(@photo.image.path).first
     @photo_width = mediumimage.columns
     @photo_height = mediumimage.rows
     @next_photo = @photo.get_next('desc', [@tag.id])
