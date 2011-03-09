@@ -1,3 +1,14 @@
 <div id="slideshow">
   <%= link_to(image_tag("/photos/#{@photo.id}/image", :border => 0, :class => @class), photos_path) %>
 </div>
+
+<script type="text/javascript">
+  $(function(){
+    var myImage = $('img.slide');
+    if(myImage.width() / document.body.clientWidth > myImage.height() / document.body.clientHeight){
+      myImage.width("99%");
+    } else {
+      myImage.height("99%");
+    }
+  });
+</script>

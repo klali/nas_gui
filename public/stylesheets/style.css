@@ -51,10 +51,6 @@ div#slideshow {
   background-color: black;
 }
 
-img.slide {
-  height: 99%;
-}
-
 div.frame {
   background: none repeat scroll 0 0 #FFFFFF;
   border: 2px solid #DDDDDD;
