@@ -70,7 +70,33 @@ class Photo < ActiveRecord::Base
       exif.save
       p.rotate "left"
     end
+    p.set_width_and_height
+    p.set_sizes
     p
+  end
+
+  def set_width_and_height
+    i = Image.read(path).first
+    self.width = i.columns
+    self.height = i.rows
+    i.destroy!
+    m = Image.read(image.path).first
+    self.medium_width = m.columns
+    self.medium_height = m.rows
+    m.destroy!
+    t = Image.read(image.path(:thumbnail)).first
+    self.thumb_width = t.columns
+    self.thumb_height = t.rows
+    t.destroy!
+    save
+    self
+  end
+
+  def set_sizes
+    self.medium_size = File.stat(image.path).size
+    self.thumb_size = File.stat(image.path(:thumbnail)).size
+    save
+    self
   end
 
   def taken_at=(date)
@@ -106,10 +132,14 @@ class Photo < ActiveRecord::Base
     i = Image.read(path).first
     i = i.rotate(angle)
     i.write(path)
+    i.destroy!
     file = File.open path
     self.image = file
     file.close
     save
+    set_width_and_height
+    set_sizes
+    self
   end
 
   def self.get_pagination(page, tags, sort = "desc")

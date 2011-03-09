@@ -2,12 +2,12 @@ require 'csv'
 
 tags_hash = {}
 
-CSV.foreach('/home/kllin/private/photos-import/folder-utf.txt') do |row|
+CSV.foreach('/home/kllin/private/photos-import/FolderTable.csv') do |row|
   next if row[1].empty?
   tags_hash[row[0].to_i] = row[1]
 end
 
-CSV.foreach('/home/kllin/private/photos-import/image-utf.txt') do |row|
+CSV.foreach('/home/kllin/private/photos-import/ImageTable.csv') do |row|
   pic_name = row[5]
   tags_in = row[6]
   tags = []

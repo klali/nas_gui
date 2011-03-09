@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110303181309) do
+ActiveRecord::Schema.define(:version => 20110308122412) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -33,6 +33,14 @@ ActiveRecord::Schema.define(:version => 20110303181309) do
     t.string   "image_content_type"
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
+    t.integer  "width"
+    t.integer  "height"
+    t.integer  "medium_width"
+    t.integer  "medium_height"
+    t.integer  "thumb_width"
+    t.integer  "thumb_height"
+    t.integer  "medium_size"
+    t.integer  "thumb_size"
   end
 
   add_index "photos", ["deleted"], :name => "index_photos_on_deleted"
