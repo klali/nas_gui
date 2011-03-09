@@ -189,7 +189,7 @@ class Photo < ActiveRecord::Base
       sort = "asc"
       symbol = '>'
     else
-      sort = "asc"
+      sort = "desc"
       symbol = '<'
     end
     get_one_by_symbol(symbol, sort, tags)
