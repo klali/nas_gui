@@ -27,7 +27,7 @@ CSV.foreach('/home/kllin/private/photos-import/ImageTable.csv') do |row|
     end
   end
 
-  files = Dir.glob(Configuration.get_photo_path + "**/#{pic_name}", File::FNM_CASEFOLD)
+  files = Dir.glob(Configuration.get_photo_path + "**/#{pic_name}")
   if(files.size == 1)
     path = files.first
     if(path.ends_with?(".jpg") || path.ends_with?(".JPG"))
