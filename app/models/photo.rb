@@ -315,7 +315,6 @@ class Photo < ActiveRecord::Base
     factor = meta[:max_count] / height
     #each_width = width / meta[:num_counts]
     each_width = 60
-    puts "#{each_width} #{meta[:num_counts]}"
     images = []
 
     x_position = each_width / 2
