@@ -209,18 +209,12 @@ class Photo < ActiveRecord::Base
 
   def get_one_by_symbol(symbol,sort,tags)
     if(tags.nil? || tags.empty?)
-      photo = Photo.find(:first, :conditions => "taken_at #{symbol} '#{taken_at}' and deleted = false",
-                 :order => "taken_at #{sort}", :include => :tags)
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").first
     else
       join = Photo.join_for_tags(tags)
-      photo = Photo.find(:first,
-                         :joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
-                         :conditions => "photos.deleted = false and photos.taken_at #{symbol} '#{taken_at}'",
-                         :order => "photos.taken_at #{sort}",
-                         :group => 'photos.id',
-                         :having => "count(pt_group.photo_id) >= #{tags.count}",
-                         :include => :tags
-                        )
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").
+        joins("#{join} join photos_tags pt_group on pt_group.photo_id = photos.id").group('photos.id').
+        having("count(pt_group.photo_id) >= #{tags.count}").first
     end
     photo
   end
