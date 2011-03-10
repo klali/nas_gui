@@ -147,7 +147,7 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     if(tags.nil? || tags.empty?)
-      count = Photo.count(:id, :conditions => 'deleted = false')
+      count = Photo.where('deleted = false').count
       photos = Photo.paginate(:conditions => 'deleted = false',
                               :order => "taken_at #{sort}",
                               :include => :tags,
@@ -155,11 +155,7 @@ class Photo < ActiveRecord::Base
                               :total_entries => count)
     else
       join = join_for_tags(tags)
-      count = Photo.count(:id, :joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
-                          :conditions => 'photos.deleted = false',
-                          :group => 'photos.id',
-                          :having => "count(pt_group.photo_id) >= #{tags.count}"
-      ).size
+      count = Photo.joins("#{join} join photos_tags pt_group on pt_group.photo_id = photos.id").where("photos.deleted = false").group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
       photos = Photo.paginate(:joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
                      :conditions => 'photos.deleted = false',
                      :group => 'photos.id',
