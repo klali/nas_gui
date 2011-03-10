@@ -147,24 +147,36 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     if(tags.nil? || tags.empty?)
-      count = Photo.count_by_sql("select count(id) from photos where deleted = false")
-      photos = Photo.paginate_by_sql ["select p.* from photos p where deleted = false order by taken_at #{sort}"],
-        :page => page,
-        :total_entries => count
+      count = Photo.count(:id, :conditions => 'deleted = false')
+      photos = Photo.paginate(:conditions => 'deleted = false',
+                              :order => "taken_at #{sort}",
+                              :include => :tags,
+                              :page => page,
+                              :total_entries => count)
     else
       join = join_for_tags(tags)
-      count = Photo.count_by_sql("select count(1) from (select count(1) from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false group by p.id having count(pt_group.photo_id) >= #{tags.count}) as query")
-      photos = Photo.paginate_by_sql ["select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false group by p.id having count(pt_group.photo_id) >= #{tags.count} order by p.taken_at #{sort}"],
-        :page => page,
-        :total_entries => count
+      count = Photo.count(:id, :joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
+                          :conditions => 'photos.deleted = false',
+                          :group => 'photos.id',
+                          :having => "count(pt_group.photo_id) >= #{tags.count}"
+      ).size
+      photos = Photo.paginate(:joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
+                     :conditions => 'photos.deleted = false',
+                     :group => 'photos.id',
+                     :having => "count(pt_group.photo_id) >= #{tags.count}",
+                     :order => "photos.taken_at #{sort}",
+                     :include => :tags,
+                     :page => page,
+                     :total_entries => count)
     end
     [photos,count]
   end
 
   def self.join_for_tags(tags = [])
+    tags = tags.map { |tag| tag.to_i }
     join = ""
     tags.each do |tag|
-      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = p.id and pt_#{tag}.tag_id = #{tag}"
+      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = photos.id and pt_#{tag}.tag_id = #{tag}"
     end
     join
   end
@@ -197,10 +209,18 @@ class Photo < ActiveRecord::Base
 
   def get_one_by_symbol(symbol,sort,tags)
     if(tags.nil? || tags.empty?)
-      photo = Photo.find_by_sql("select * from photos where taken_at #{symbol} '#{taken_at}' and deleted = false order by taken_at #{sort} limit 1").first
+      photo = Photo.find(:first, :conditions => "taken_at #{symbol} '#{taken_at}' and deleted = false",
+                 :order => "taken_at #{sort}", :include => :tags)
     else
       join = Photo.join_for_tags(tags)
-      photo = Photo.find_by_sql("select p.* from photos p #{join} join photos_tags pt_group on pt_group.photo_id = p.id where p.deleted = false and p.taken_at #{symbol} '#{taken_at}' group by p.id having count(pt_group.photo_id) >= #{tags.count} order by p.taken_at #{sort} limit 1").first
+      photo = Photo.find(:first,
+                         :joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
+                         :conditions => "photos.deleted = false and photos.taken_at #{symbol} '#{taken_at}'",
+                         :order => "photos.taken_at #{sort}",
+                         :group => 'photos.id',
+                         :having => "count(pt_group.photo_id) >= #{tags.count}",
+                         :include => :tags
+                        )
     end
     photo
   end
