@@ -7,7 +7,7 @@ class Tag < ActiveRecord::Base
   has_attached_file :thumbnail
 
   def get_first_photo
-    Photo.find_by_sql("select p.* from photos p join photos_tags pt on pt.photo_id = p.id where pt.tag_id = #{id} order by p.taken_at desc limit 1").first
+    Photo.joins("join photos_tags pt on pt.photo_id = photos.id").where("pt.tag_id = #{id} and photos.deleted = false").order('photos.taken_at desc').first
   end
 
   def thumb_id=(id)
