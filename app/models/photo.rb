@@ -218,8 +218,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       raw_months_data = connection.execute("select count(id),date_format(taken_at, '%Y-%m') as taken_month from photos where deleted = false group by taken_month")
     else
-      join = join_for_tags(tags)
-      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select photos.id,photos.taken_at from photos #{join} join photos_tags pt_group on pt_group.photo_id = photos.id where photos.deleted = false group by photos.id having count(pt_group.photo_id) >= #{tags.count}) as p2 group by taken_month")
+      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select photos.id,photos.taken_at from photos #{join_for_tags(tags)} where photos.deleted = false group by photos.id having count(pt_group.photo_id) >= #{tags.count}) as p2 group by taken_month")
     end
     while(data = raw_months_data.fetch_row)
       count,date = data
