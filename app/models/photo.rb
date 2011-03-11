@@ -140,16 +140,12 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     if(tags.nil? || tags.empty?)
-      count = Photo.where('deleted = false').count
-      photos = Photo.paginate(:conditions => 'deleted = false',
-                              :order => "taken_at #{sort}",
-                              :include => :tags,
-                              :page => page,
-                              :total_entries => count)
+      count = Photo.where(:deleted => false).count
+      photos = Photo.where(:deleted => false).order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
     else
       join = join_for_tags(tags)
-      count = Photo.joins(join).where("photos.deleted = false").group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.where('photos.deleted = false').joins(join).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
+      count = Photo.joins(join).where(:deleted => false).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
+      photos = Photo.where(:deleted => false).joins(join).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
     end
     [photos,count]
   end
