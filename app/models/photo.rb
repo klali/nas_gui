@@ -155,8 +155,8 @@ class Photo < ActiveRecord::Base
                               :total_entries => count)
     else
       join = join_for_tags(tags)
-      count = Photo.joins("#{join} join photos_tags pt_group on pt_group.photo_id = photos.id").where("photos.deleted = false").group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.paginate(:joins => "#{join} join photos_tags pt_group on pt_group.photo_id = photos.id",
+      count = Photo.joins(join).where("photos.deleted = false").group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
+      photos = Photo.paginate(:joins => join,
                      :conditions => 'photos.deleted = false',
                      :group => 'photos.id',
                      :having => "count(pt_group.photo_id) >= #{tags.count}",
@@ -172,7 +172,7 @@ class Photo < ActiveRecord::Base
     tags = tags.map { |tag| tag.to_i }
     join = ""
     tags.each do |tag|
-      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = photos.id and pt_#{tag}.tag_id = #{tag}"
+      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = photos.id and pt_#{tag}.tag_id = #{tag} join photos_tags pt_group on pt_group.photo_id = photos.id"
     end
     join
   end
@@ -207,10 +207,21 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").first
     else
-      join = Photo.join_for_tags(tags)
       photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").
-        joins("#{join} join photos_tags pt_group on pt_group.photo_id = photos.id").group('photos.id').
+        joins(Photo.join_for_tags(tags)).group('photos.id').
         having("count(pt_group.photo_id) >= #{tags.count}").first
+    end
+    photo
+  end
+
+  def self.get_first(sort = "desc", tags = [])
+    if(!sort.eql?("desc") && !sort.eql?("asc"))
+      sort = "desc"
+    end
+    if(tags.nil? || tags.empty?)
+      photo = Photo.where('deleted = false').order("taken_at #{sort}").first
+    else
+      photo = Photo.where('deleted = false').joins(join_for_tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
     end
     photo
   end

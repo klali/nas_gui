@@ -13,9 +13,7 @@ class PhotosController < ApplicationController
       @modal = params[:modal]
     end
 
-    pagination = Photo.get_pagination(page, @selected_tags, @sort)
-    @photos = pagination.shift
-    @count = pagination.shift
+    @photos, @count = Photo.get_pagination(page, @selected_tags, @sort)
     if(page.to_i > @photos.total_pages)
       session[:page] = 1
       @photos = Photo.get_pagination(1, @selected_tags, @sort).first
@@ -141,7 +139,7 @@ class PhotosController < ApplicationController
     @class = "slide"
     nxt = @photo.get_next(sort,tags)
     if(nxt.nil?)
-      nxt = Photo.get_pagination(1, tags, sort).first.first
+      nxt = Photo.get_first(sort, tags)
     end
     @refresh = "/photos/#{nxt.id}/slideshow"
   end
