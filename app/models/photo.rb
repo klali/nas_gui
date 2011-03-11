@@ -163,9 +163,9 @@ class Photo < ActiveRecord::Base
 
   def self.join_for_tags(tags = [])
     tags = tags.map { |tag| tag.to_i }
-    join = ""
+    join = "join photos_tags pt_group on pt_group.photo_id = photos.id"
     tags.each do |tag|
-      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = photos.id and pt_#{tag}.tag_id = #{tag} join photos_tags pt_group on pt_group.photo_id = photos.id"
+      join += " join photos_tags pt_#{tag} on pt_#{tag}.photo_id = photos.id and pt_#{tag}.tag_id = #{tag}"
     end
     join
   end
