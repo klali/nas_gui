@@ -108,14 +108,7 @@ class Photo < ActiveRecord::Base
   end
 
   def display_tags
-    display = ""
-    tags.each do |tag|
-      if(!display.empty?)
-        display += ", "
-      end
-      display += tag.name
-    end
-    display
+    tags.map{ |tag| tag.name }.join(', ')
   end
 
   def rotate(direction)
