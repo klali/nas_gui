@@ -44,6 +44,8 @@ class PhotosController < ApplicationController
       end
     end
 
+    @hidden_tags = session[:hidden_tags] || []
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @photos }
@@ -195,5 +197,23 @@ class PhotosController < ApplicationController
                :type => "image/png",
                :filename => "histogram" + tags.join('_') + "_#{slice}",
                :disposition => 'inline')
+  end
+
+  def toggle_tag
+    @tag = Tag.find params[:tag]
+    hidden = params[:hidden]
+    if(session[:hidden_tags].nil?)
+      session[:hidden_tags] = []
+    end
+    if(hidden.eql?"true")
+      @hidden = true
+      session[:hidden_tags].push @tag.id
+    else
+      @hidden = false
+      session[:hidden_tags].delete @tag.id
+    end
+    respond_to do |format|
+      format.js
+    end
   end
 end

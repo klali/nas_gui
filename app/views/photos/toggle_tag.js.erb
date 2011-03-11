@@ -1,0 +1,7 @@
+<% if @hidden %>
+  $("img#arrow_<%= @tag.id %>").attr('src', "/images/right_arrow.png");
+  $("img#arrow_<%= @tag.id %>").attr('title', "Show \"<%= @tag.name %>\"");
+<% else %>
+  $("img#arrow_<%= @tag.id %>").attr('src', "/images/down_arrow.png");
+  $("img#arrow_<%= @tag.id %>").attr('title', "Hide \"<%= @tag.name %>\"");
+<% end %>

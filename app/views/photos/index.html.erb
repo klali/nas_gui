@@ -50,7 +50,7 @@
 
   <div id="tags">
     <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
-      <li class="tag" id="tag_<%= node.id %>">
+      <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
         <% rel = "" %>
         <% if node.thumbnail? %>
           <% rel = "rel='htmltooltip'" %>
@@ -62,14 +62,25 @@
             <%= "&nbsp;".html_safe * 4 %>
           <% end %>
           <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-          <%= "(#{node.photos.count})" %>
+          <% unless node.photos.empty? %>
+            <%= "(#{node.photos.count})" %>
+          <% end %>
+          <% if node.has_descendants? %>
+            <% if @hidden_tags.find_index(node.id).nil? %>
+              <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
+            <% else %>
+              <%= image_tag("/images/right_arrow.png", :title => "Show \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
+            <% end %>
+          <% end %>
         </div>
         <% if node.thumbnail? %>
           <div class="htmltooltip">
             <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
           </div>
         <% end %>
-        <%= child %>
+        <div class="child">
+          <%= child %>
+        </div>
       </li>
     <% end %>
     <%= submit_tag "filter" %>
@@ -98,6 +109,12 @@
 </div>
 <script type="text/javascript">
 
+  $('img.folding_arrow').click(function(e){
+      $(this).parent().parent().children(".child").toggle('fast', function(){
+        $.post("/photos/toggle_tag", {tag: $(this).parent().attr('tag'), hidden: $(this).is(':hidden')});
+        });
+      });
+
   $(function(){
       //Get our elements for faster access and set overlay width
       var div = $('div.histogram'),
@@ -114,5 +131,10 @@
 
   <% unless @modal.nil? %>
     jQuery.facebox({ajax: "/photos/<%= @modal %>"})
+  <% end %>
+
+  <% @hidden_tags.each do |tag| %>
+    tag = $("li#tag_<%= tag %>").children(".child");
+    tag.hide();
   <% end %>
 </script>

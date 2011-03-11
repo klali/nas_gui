@@ -111,3 +111,6 @@ ul.histogram {
   filter:alpha(opacity=50);50
   opacity: 0.5;
 }
+.folding_arrow {
+  padding-top: 3px;
+}
