@@ -149,14 +149,7 @@ class Photo < ActiveRecord::Base
     else
       join = join_for_tags(tags)
       count = Photo.joins(join).where("photos.deleted = false").group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.paginate(:joins => join,
-                     :conditions => 'photos.deleted = false',
-                     :group => 'photos.id',
-                     :having => "count(pt_group.photo_id) >= #{tags.count}",
-                     :order => "photos.taken_at #{sort}",
-                     :include => :tags,
-                     :page => page,
-                     :total_entries => count)
+      photos = Photo.where('photos.deleted = false').joins(join).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
     end
     [photos,count]
   end
@@ -200,9 +193,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").first
     else
-      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").
-        joins(Photo.join_for_tags(tags)).group('photos.id').
-        having("count(pt_group.photo_id) >= #{tags.count}").first
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").joins(Photo.join_for_tags(tags)).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
     end
     photo
   end
