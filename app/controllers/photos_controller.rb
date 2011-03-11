@@ -7,6 +7,7 @@ class PhotosController < ApplicationController
     @selected_tags = session[:tags] || []
     @sort = params[:sort] || session[:sort] || "desc"
     session[:sort] = @sort
+    @hidden_tags = session[:hidden_tags] || []
 
     if(params[:modal])
       @modal = params[:modal]
@@ -22,29 +23,19 @@ class PhotosController < ApplicationController
 
     @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
     @current_hist = []
-    if @sort.eql?"asc"
-      tmp_hist = @histogram_data.index page
-      if tmp_hist.nil?
+    tmp_hist = @histogram_data.index page
+    if tmp_hist.nil?
+      if @sort.eql?"asc"
         @current_hist.push((@histogram_data + [page]).sort.find_index(page) - 1)
       else
-        @current_hist.push tmp_hist
-        while @histogram_data[tmp_hist += 1] == page do
-          @current_hist.push tmp_hist
-        end
+        @current_hist.push((@histogram_data + [page]).sort.reverse.find_index(page))
       end
     else
-      tmp_hist = @histogram_data.find_index page
-      if tmp_hist.nil?
-        @current_hist.push((@histogram_data + [page]).sort.reverse.find_index(page))
-      else
+      @current_hist.push tmp_hist
+      while @histogram_data[tmp_hist += 1] == page do
         @current_hist.push tmp_hist
-        while @histogram_data[tmp_hist += 1] == page do
-          @current_hist.push tmp_hist
-        end
       end
     end
-
-    @hidden_tags = session[:hidden_tags] || []
 
     respond_to do |format|
       format.html # index.html.erb
