@@ -14,7 +14,7 @@
         </td><td>
         <div id="next_photo">
           <% unless @next_photo.nil? %>
-            <%= link_to(@prev_photo.image.url(:thumbnail), :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true}) %>
+            <%= link_to(image_tag(@next_photo.image.url(:thumbnail), :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true}) %>
           <% end %>
         </div>
       </td>

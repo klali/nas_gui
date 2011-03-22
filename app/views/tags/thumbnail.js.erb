@@ -2,16 +2,16 @@ $('img#crop_photo').imgAreaSelect({ disable: true, hide: true });
 <% if @prev_photo.nil? %>
   $('#prev_photo').html('');
 <% else %>
-  $('#prev_photo').html('<%= link_to(image_tag("/photos/#{@prev_photo.id}/thumbnail", :border => 0, :title => "Previous photo"), {:action => :thumbnail, :id => @tag.id, :photo_id => @prev_photo.id}, {:remote => true, :id => 'prevLink'}) %>');
+  $('#prev_photo').html('<%= link_to(image_tag(@prev_photo.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :thumbnail, :id => @tag.id, :photo_id => @prev_photo.id}, {:remote => true, :id => 'prevLink'}) %>');
 <% end %>
-$('#photo').html('<%= image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :id => 'crop_photo') %>');
+$('#photo').html('<%= image_tag(@photo.image.url(:medium), :border => 0, :id => 'crop_photo') %>');
 <% if @next_photo.nil? %>
   $('#next_photo').html('');
 <% else %>
-  $('#next_photo').html('<%= link_to(image_tag("/photos/#{@next_photo.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true, :id => 'nextLink'}) %>');
+  $('#next_photo').html('<%= link_to(image_tag(@next_photo.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
 
-$('#preview').html('<%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "75px", :height => "75px" %>');
+$('#preview').html('<%= image_tag @photo.image.url(:medium), :width => "75px", :height => "75px" %>');
 $('input#temp_thumb_id').val(<%= @photo.id %>);
 $('input#temp_thumb_width').val('');
 $('input#temp_thumb_height').val('');
