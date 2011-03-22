@@ -98,7 +98,6 @@
     <%= link_to("Ascending", :action => 'index', :sort => 'asc') %>
   <% end %>
   <br/>
-  <%= link_to "Scan for new photos", :action => 'rescan' %>
   <% if !@photos.empty? %>
     <%= link_to "Start slideshow", :action => 'slideshow', :id => @photos.first.id %>
   <% end %>

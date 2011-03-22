@@ -16,27 +16,6 @@ class Photo < ActiveRecord::Base
     :thumbnail => ['-strip', '-quality 50']
   }
 
-  def self.scan_directory
-    scanned = 0
-    Find.find(Configuration.get_photo_path) { |path|
-      if FileTest.file?(path)
-        if(path.ends_with?(".jpg") || path.ends_with?(".JPG"))
-          p = add_or_update(path)
-          scanned += 1
-        end
-      end
-    }
-
-    Photo.find_each(:conditions => {:deleted => false}, :batch_size => 100) { |photo|
-      if files.find_index(photo.path).nil?
-        photo.deleted = true
-        photo.save
-        scanned += 1
-      end
-    }
-    scanned
-  end
-
   def self.add_or_update(file, force_update = false)
     p = Photo.find_by_path file
     stat = File::Stat.new file
