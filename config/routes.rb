@@ -15,9 +15,6 @@ NasGui::Application.routes.draw do
 
   resources :photos do
     member do
-      get 'thumbnail'
-      get 'image'
-      get 'mediumimage'
       get 'rotate_left'
       get 'rotate_right'
       get 'slideshow'
