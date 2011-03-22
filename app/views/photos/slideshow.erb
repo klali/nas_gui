@@ -1,5 +1,5 @@
 <div id="slideshow">
-  <%= link_to(image_tag("/photos/#{@photo.id}/image", :border => 0, :class => @class), photos_path) %>
+  <%= link_to(image_tag(@photo.image.url, :border => 0, :class => @class), photos_path) %>
 </div>
 
 <script type="text/javascript">

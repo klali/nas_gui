@@ -28,7 +28,7 @@
         <% end %>
           <td id="photo_<%= photo.id %>" class="thumbnail">
             <div class="thumbnail_inner">
-            <%= link_to(image_tag("/photos/#{photo.id}/thumbnail", :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
+            <%= link_to(image_tag(photo.image.url(:thumbnail), :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
               <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter += 1, :id => "pic_#{photo.id}" %>
               <span class="thumb_tags" title="<%= photo.display_tags %>">
@@ -75,12 +75,10 @@
         </div>
         <% if node.thumbnail? %>
           <div class="htmltooltip">
-            <%= image_tag("/tags/#{node.id}/display_thumbnail") %>
+            <%= image_tag(node.thumbnail.url) %>
           </div>
         <% end %>
-        <div class="child">
-          <%= child %>
-        </div>
+        <%= child %>
       </li>
     <% end %>
     <%= submit_tag "filter" %>
@@ -110,7 +108,7 @@
 <script type="text/javascript">
 
   $('img.folding_arrow').click(function(e){
-      $(this).parent().parent().children(".child").toggle('fast', function(){
+      $(this).parent().parent().children("ul").toggle('fast', function(){
         $.post("/photos/toggle_tag", {tag: $(this).parent().attr('tag'), hidden: $(this).is(':hidden')});
         });
       });

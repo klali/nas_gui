@@ -5,19 +5,19 @@
       <td>
         <div id="prev">
           <% if !@prev.nil? %>
-            <%= link_to(image_tag("/photos/#{@prev.id}/thumbnail", :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>
+            <%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>
           <% end %>
         </div>
       </td>
       <td>
         <div id="photo">
-          <%= link_to(image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :title => @photo.display_tags), :action => :image) %><br/>
+          <%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags), @photo.image.url) %><br/>
         </div>
       </td>
       <td>
         <div id="next">
           <% if !@next.nil? %>
-            <%= link_to(image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>
+            <%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>
           <% end %>
         </div>
       </td>

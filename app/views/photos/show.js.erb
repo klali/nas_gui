@@ -1,13 +1,13 @@
 <% if @prev.nil? %>
   $('#prev').html('');
 <% else %>
-  $('#prev').html('<%= link_to(image_tag("/photos/#{@prev.id}/thumbnail", :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
+  $('#prev').html('<%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
 <% end %>
-$('#photo').html('<%= link_to(image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :title => @photo.display_tags), :action => :image) %>');
+$('#photo').html('<%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags), @photo.image.url) %>');
 <% if @next.nil? %>
   $('#next').html('');
 <% else %>
-  $('#next').html('<%= link_to(image_tag("/photos/#{@next.id}/thumbnail", :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
+  $('#next').html('<%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
 $('#footer').html('<%= @photo.display_tags %><br/><%= @photo.taken_at %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
 $('#stars').html('<div id="stars"></div>');

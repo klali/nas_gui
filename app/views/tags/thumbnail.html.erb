@@ -4,17 +4,17 @@
       <td>
         <div id="prev_photo">
           <% unless @prev_photo.nil? %>
-            <%= link_to(image_tag("/photos/#{@prev_photo.id}/thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @prev_photo.id}, {:remote => true}) %>
+            <%= link_to(image_tag(@prev_photo.image.url(:thumbnail), :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @prev_photo.id}, {:remote => true}) %>
           <% end %>
           </td><td>
         </div>
         <div id="photo">
-          <%= image_tag("/photos/#{@photo.id}/mediumimage", :border => 0, :id => 'crop_photo') %>
+          <%= image_tag(@photo.image.url(:medium), :border => 0, :id => 'crop_photo') %>
         </div>
         </td><td>
         <div id="next_photo">
           <% unless @next_photo.nil? %>
-            <%= link_to(image_tag("/photos/#{@next_photo.id}/thumbnail", :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true}) %>
+            <%= link_to(@prev_photo.image.url(:thumbnail), :border => 0), {:action => :thumbnail, :id => @tag.id, :photo_id => @next_photo.id}, {:remote => true}) %>
           <% end %>
         </div>
       </td>
@@ -24,7 +24,7 @@
       <td>
         <div class="frame" style="width: 75px; height: 75px;">
           <div id="preview" style="width: 75px; height: 75px; overflow: hidden;">
-            <%= image_tag "/photos/#{@photo.id}/mediumimage", :width => "75px", :height => "75px" %>
+            <%= image_tag @photo.image.url(:medium), :width => "75px", :height => "75px" %>
           </div>
         </div>
       </td>
