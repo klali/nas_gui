@@ -20,6 +20,8 @@ class Photo < ActiveRecord::Base
     joins(join_for_tags(tags))
   }
 
+  default_scope order(:taken_at)
+
   def self.add_or_update(file, force_update = false)
     p = Photo.find_by_path file
     stat = File::Stat.new file
