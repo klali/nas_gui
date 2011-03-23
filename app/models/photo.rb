@@ -16,6 +16,10 @@ class Photo < ActiveRecord::Base
     :thumbnail => ['-strip', '-quality 50']
   }
 
+  scope :tags, lambda { |tags|
+    joins(join_for_tags(tags))
+  }
+
   def self.add_or_update(file, force_update = false)
     p = Photo.find_by_path file
     stat = File::Stat.new file
@@ -122,9 +126,8 @@ class Photo < ActiveRecord::Base
       count = Photo.where(:deleted => false).count
       photos = Photo.where(:deleted => false).order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
     else
-      join = join_for_tags(tags)
-      count = Photo.joins(join).where(:deleted => false).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.where(:deleted => false).joins(join).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
+      count = Photo.tags(tags).where(:deleted => false).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
+      photos = Photo.tags(tags).where(:deleted => false).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
     end
     [photos,count]
   end
@@ -168,7 +171,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").first
     else
-      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").joins(Photo.join_for_tags(tags)).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
     end
     photo
   end
@@ -180,7 +183,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.where('deleted = false').order("taken_at #{sort}").first
     else
-      photo = Photo.where('deleted = false').joins(join_for_tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
+      photo = Photo.where('deleted = false').tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
     end
     photo
   end
