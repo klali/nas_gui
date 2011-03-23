@@ -114,3 +114,11 @@ ul.histogram {
 .folding_arrow {
   padding-top: 3px;
 }
+
+a:visited {
+  color: blue;
+}
+
+a:hover {
+  color: black;
+}
