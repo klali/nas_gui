@@ -21,6 +21,7 @@ class Photo < ActiveRecord::Base
   }
 
   default_scope order(:taken_at)
+  default_scope where(:deleted => false)
 
   def self.add_or_update(file, force_update = false)
     p = Photo.find_by_path file
@@ -125,11 +126,11 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     if(tags.nil? || tags.empty?)
-      count = Photo.where(:deleted => false).count
-      photos = Photo.where(:deleted => false).order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
+      count = Photo.count
+      photos = Photo..order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
     else
-      count = Photo.tags(tags).where(:deleted => false).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.tags(tags).where(:deleted => false).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
+      count = Photo.tags(tags).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
+      photos = Photo.tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
     end
     [photos,count]
   end
@@ -171,9 +172,9 @@ class Photo < ActiveRecord::Base
 
   def get_one_by_symbol(symbol,sort,tags)
     if(tags.nil? || tags.empty?)
-      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").first
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}'").order("taken_at #{sort}").first
     else
-      photo = Photo.where("taken_at #{symbol} '#{taken_at}' and deleted = false").order("taken_at #{sort}").tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}'").order("taken_at #{sort}").tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
     end
     photo
   end
@@ -183,9 +184,9 @@ class Photo < ActiveRecord::Base
       sort = "desc"
     end
     if(tags.nil? || tags.empty?)
-      photo = Photo.where('deleted = false').order("taken_at #{sort}").first
+      photo = Photo.order("taken_at #{sort}").first
     else
-      photo = Photo.where('deleted = false').tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
+      photo = Photo.tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
     end
     photo
   end
