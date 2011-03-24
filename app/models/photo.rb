@@ -129,7 +129,7 @@ class Photo < ActiveRecord::Base
     end
     if(tags.nil? || tags.empty?)
       count = Photo.count
-      photos = Photo..order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
+      photos = Photo.order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
     else
       count = Photo.tags(tags).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
       photos = Photo.tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
