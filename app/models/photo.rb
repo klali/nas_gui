@@ -19,11 +19,14 @@ class Photo < ActiveRecord::Base
     joins(join_for_tags(tags))
   }
 
-  default_scope order(:taken_at)
   default_scope where(:deleted => false)
 
+  def self.get_by_path(path)
+    with_exclusive_scope{Photo.find_by_path path}
+  end
+
   def self.add_or_update(file, force_update = false)
-    p = Photo.find_by_path file
+    p = Photo.get_by_path file
     stat = File::Stat.new file
     if(p.nil?)
       p = Photo.new
