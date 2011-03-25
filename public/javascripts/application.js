@@ -15,11 +15,11 @@ $(document).ready(function($) {
       tabSize: 25,
       tolerance: 'pointer',
       toleranceElement: '> div',
-    });
-    $('#saveListButton').click(function(){
-      var mylist = $('ul.sortable').nestedSortable('serialize');
-      $.post("/tags/save_list", mylist);
-      return false;
+      update: function(event, ui) {
+        var mylist = $('ul.sortable').nestedSortable('serialize');
+        $.post("/tags/save_list", mylist);
+        return true;
+      }
     });
 });
 
