@@ -135,7 +135,7 @@ class TagsController < ApplicationController
       end
     end
     respond_to do |format|
-      format.html { redirect_to({:controller => :photos}, {:notice => "Saved tag list"}) }
+      format.js
     end
   end
 end
