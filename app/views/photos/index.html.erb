@@ -130,7 +130,7 @@
   <% end %>
 
   <% @hidden_tags.each do |tag| %>
-    tag = $("li#tag_<%= tag %>").children(".child");
+    tag = $("li#tag_<%= tag %>").children("ul");
     tag.hide();
   <% end %>
 </script>
