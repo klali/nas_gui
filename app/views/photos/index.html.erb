@@ -126,7 +126,9 @@
   });
 
   <% unless @modal.nil? %>
-    jQuery.facebox({ajax: "/photos/<%= @modal %>"})
+    $(document).ready(function($) {
+      jQuery.facebox({ajax: "/photos/<%= @modal %>"});
+    });
   <% end %>
 
   <% @hidden_tags.each do |tag| %>
