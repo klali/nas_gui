@@ -4,21 +4,17 @@
   <p id="notice"><%= notice %></p>
   <p><%= page_entries_info @photos %>
 
-  <div class="histogram">
-    <ul class="histogram">
-      <% count = 0 %>
-      <% for histogram in 0..(@histogram_data.count - 1) %>
-        <% current = false %>
-        <% if @current_hist.find_index histogram %>
-          <% current = true %>
+  <% cache(:action => 'index', :action_suffix => 'histogram') do %>
+    <div class="histogram">
+      <ul class="histogram">
+        <% for histogram in 0..(@histogram_data.count - 1) %>
+          <li>
+          <%= link_to(image_tag("/photos/histogram?slice=#{histogram}&current=false", :border => 0, :title => "jump to page #{@histogram_data[histogram]}", :id => "histimg_#{histogram}"), :action => :index, :page => @histogram_data[histogram]) %>
+          </li>
         <% end %>
-        <li <%= current ? "class='current'" : ""%>>
-        <%= link_to(image_tag("/photos/histogram?slice=#{count}&current=#{current}", :border => 0, :title => "jump to page #{@histogram_data[histogram]}"), :action => :index, :page => @histogram_data[histogram]) %>
-        <% count += 1 %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+      </ul>
+    </div>
+  <% end %>
   <%= form_tag('/photos/filter_tags') %>
   <table id="photos">
     <% counter = 0 %>
@@ -48,9 +44,10 @@
     <% end %>
   </table>
 
-  <div id="tags">
-    <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
-      <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
+  <% cache(:action => 'index', :action_suffix => 'tags') do %>
+    <div id="tags">
+      <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
+        <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
         <% rel = "" %>
         <% if node.thumbnail? %>
           <% rel = "rel='htmltooltip'" %>
@@ -66,11 +63,7 @@
             <%= "(#{node.photos.count})" %>
           <% end %>
           <% if node.has_descendants? %>
-            <% if @hidden_tags.find_index(node.id).nil? %>
-              <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
-            <% else %>
-              <%= image_tag("/images/right_arrow.png", :title => "Show \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
-            <% end %>
+            <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
           <% end %>
         </div>
         <% if node.thumbnail? %>
@@ -79,14 +72,15 @@
           </div>
         <% end %>
         <%= child %>
-      </li>
-    <% end %>
-    <%= submit_tag "filter" %>
-    <%= submit_tag "assign" %>
-    <%= submit_tag "remove" %>
-    <br/>
-    <%= link_to("New tag", :controller => :tags, :action => 'new') %>
-  </div>
+        </li>
+      <% end %>
+      <%= submit_tag "filter" %>
+      <%= submit_tag "assign" %>
+      <%= submit_tag "remove" %>
+      <br/>
+      <%= link_to("New tag", :controller => :tags, :action => 'new') %>
+    </div>
+  <% end %>
 </form>
 
 <div class="footer">
@@ -134,5 +128,12 @@
   <% @hidden_tags.each do |tag| %>
     tag = $("li#tag_<%= tag %>").children("ul");
     tag.hide();
+    img = $("img#arrow_<%= tag %>");
+    img.attr('src',"/images/right_arrow.png");
+  <% end %>
+
+  <% @current_hist.each do |current| %>
+    img = $("img#histimg_<%= current %>")
+    img.attr('src', "/photos/histogram?slice=<%=current%>&current=true");
   <% end %>
 </script>

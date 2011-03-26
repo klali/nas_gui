@@ -1,4 +1,6 @@
 class PhotosController < ApplicationController
+  caches_action :histogram, :cache_path => Proc.new { |controller| controller.params }
+
   # GET /photos
   # GET /photos.xml
   def index
