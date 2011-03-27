@@ -1,5 +1,8 @@
 class PhotosController < ApplicationController
-  caches_action :histogram, :cache_path => Proc.new { |controller| controller.params }
+  caches_action :histogram, :cache_path => Proc.new { |controller|
+    controller.params
+  }
+  cache_sweeper :photo_sweeper
 
   # GET /photos
   # GET /photos.xml
@@ -46,16 +49,20 @@ class PhotosController < ApplicationController
   def filter_tags
     if(params[:commit].eql?("filter"))
       session[:tags] = params[:tags]
-    elsif(params[:commit].eql?("assign"))
-      params[:tags].each do |tag_id|
-        tag = Tag.find tag_id
-        tag.photo_ids += params[:pics].map { |p| p.to_i }
+    else
+      photos = params[:pics].map { |p| p.to_i }
+      if(params[:commit].eql?("assign"))
+        params[:tags].each do |tag_id|
+          tag = Tag.find tag_id
+          tag.photo_ids += photos
+        end
+      elsif(params[:commit].eql?"remove")
+        params[:tags].each do |tag_id|
+          tag = Tag.find tag_id
+          tag.photo_ids -= photos
+        end
       end
-    elsif(params[:commit].eql?"remove")
-      params[:tags].each do |tag_id|
-        tag = Tag.find tag_id
-        tag.photo_ids -= params[:pics].map { |p| p.to_i }
-      end
+      expire_fragment(:controller => "photos", :action => 'index', :action_suffix => 'tags')
     end
     redirect_to(photos_url)
   end
