@@ -44,7 +44,7 @@
     <% end %>
   </table>
 
-  <% cache(:action => 'index', :action_suffix => "tags_#{@selected_tags.join '_'}") do %>
+  <% cache(:action => 'index', :action_suffix => "tags") do %>
     <div id="tags">
       <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
         <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
@@ -54,7 +54,7 @@
         <% end %>
         <div class="tag_inner" <%= rel %>>
           <% unless node.photos.empty? %>
-            <%= check_box_tag "tags[]", "#{node.id}", @selected_tags.find_index("#{node.id}").nil? ? false : true, :tabindex => counter += 1 %>
+            <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
           <% else %>
             <%= "&nbsp;".html_safe * 4 %>
           <% end %>
@@ -136,6 +136,11 @@
       <% @current_hist.each do |current| %>
         img = $("img#histimg_<%= current %>")
         img.attr('src', "/photos/histogram?slice=<%=current%>&current=true&tags=<%= @selected_tags.join '_' %>");
+      <% end %>
+
+      <% @selected_tags.each do |tag| %>
+        box = $("input[name='tags[]'][value='<%=tag%>']");
+        box.attr('checked', true);
       <% end %>
       })
 </script>
