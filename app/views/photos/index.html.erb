@@ -120,20 +120,22 @@
   });
 
   <% unless @modal.nil? %>
-    $(document).ready(function($) {
+    $(function($) {
       jQuery.facebox({ajax: "/photos/<%= @modal %>"});
     });
   <% end %>
 
-  <% @hidden_tags.each do |tag| %>
-    tag = $("li#tag_<%= tag %>").children("ul");
-    tag.hide();
-    img = $("img#arrow_<%= tag %>");
-    img.attr('src',"/images/right_arrow.png");
-  <% end %>
+  $(function($) {
+      <% @hidden_tags.each do |tag| %>
+        tag = $("li#tag_<%= tag %>").children("ul");
+        tag.hide();
+        img = $("img#arrow_<%= tag %>");
+        img.attr('src',"/images/right_arrow.png");
+      <% end %>
 
-  <% @current_hist.each do |current| %>
-    img = $("img#histimg_<%= current %>")
-    img.attr('src', "/photos/histogram?slice=<%=current%>&current=true");
-  <% end %>
+      <% @current_hist.each do |current| %>
+        img = $("img#histimg_<%= current %>")
+        img.attr('src', "/photos/histogram?slice=<%=current%>&current=true");
+      <% end %>
+      })
 </script>
