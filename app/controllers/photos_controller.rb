@@ -1,6 +1,6 @@
 class PhotosController < ApplicationController
   caches_action :histogram, :cache_path => Proc.new { |controller|
-    controller.params
+    controller.params.merge Hash[*(session[:tags] || []).enum_with_index.to_a.flatten]
   }
   cache_sweeper :photo_sweeper
 
@@ -62,7 +62,7 @@ class PhotosController < ApplicationController
           tag.photo_ids -= photos
         end
       end
-      expire_fragment(:controller => "photos", :action => 'index', :action_suffix => 'tags')
+      expire_fragment(/tags.*/)
     end
     redirect_to(photos_url)
   end
