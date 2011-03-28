@@ -63,6 +63,7 @@ class PhotosController < ApplicationController
         end
       end
       expire_fragment(/tags.*/)
+      expire_fragment(/histogram.*/)
     end
     redirect_to(photos_url)
   end
