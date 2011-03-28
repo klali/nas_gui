@@ -119,13 +119,11 @@
         });
   });
 
-  <% unless @modal.nil? %>
-    $(function($) {
-      jQuery.facebox({ajax: "/photos/<%= @modal %>"});
-    });
-  <% end %>
-
   $(function($) {
+      <% unless @modal.nil? %>
+        jQuery.facebox({ajax: "/photos/<%= @modal %>"});
+      <% end %>
+
       <% @hidden_tags.each do |tag| %>
         tag = $("li#tag_<%= tag %>").children("ul");
         tag.hide();
