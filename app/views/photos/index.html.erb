@@ -9,7 +9,7 @@
       <ul class="histogram">
         <% for histogram in 0..(@histogram_data.count - 1) %>
           <li>
-          <%= link_to(image_tag("/photos/histogram?slice=#{histogram}&current=false", :border => 0, :title => "jump to page #{@histogram_data[histogram]}", :id => "histimg_#{histogram}"), :action => :index, :page => @histogram_data[histogram]) %>
+          <%= link_to(image_tag("/photos/histogram?slice=#{histogram}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{@histogram_data[histogram]}", :id => "histimg_#{histogram}"), :action => :index, :page => @histogram_data[histogram]) %>
           </li>
         <% end %>
       </ul>
@@ -135,7 +135,7 @@
 
       <% @current_hist.each do |current| %>
         img = $("img#histimg_<%= current %>")
-        img.attr('src', "/photos/histogram?slice=<%=current%>&current=true");
+        img.attr('src', "/photos/histogram?slice=<%=current%>&current=true&tags=<%= @selected_tags.join '_' %>");
       <% end %>
       })
 </script>

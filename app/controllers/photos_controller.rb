@@ -1,6 +1,6 @@
 class PhotosController < ApplicationController
   caches_action :histogram, :cache_path => Proc.new { |controller|
-    controller.params.merge Hash[*(session[:tags] || []).enum_with_index.to_a.flatten]
+    controller.params
   }
   cache_sweeper :photo_sweeper
 
