@@ -18,6 +18,16 @@ class PhotosController < ApplicationController
       @modal = params[:modal]
     end
 
+    @editing = session[:editing] || "false"
+    if(params[:edit])
+      @editing = session[:editing] = params[:edit]
+    end
+    if(@editing == "false")
+      @tag_chars = 20
+    else
+      @tag_chars = 17
+    end
+
     @photos, @count = Photo.get_pagination(page, @selected_tags, @sort)
     if(page.to_i > @photos.total_pages)
       session[:page] = 1

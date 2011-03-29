@@ -26,12 +26,15 @@
             <div class="thumbnail_inner">
             <%= link_to(image_tag(photo.image.url(:thumbnail), :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
-              <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter += 1, :id => "pic_#{photo.id}" %>
+              <% counter += 1 %>
+              <% if @editing == "true" %>
+                <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter, :id => "pic_#{photo.id}" %>
+              <% end %>
               <span class="thumb_tags" title="<%= photo.display_tags %>">
                 <% trail = "" %>
-                <% trail = "..." if photo.display_tags.mb_chars.size > 17 %>
+                <% trail = "..." if photo.display_tags.mb_chars.size > @tag_chars %>
                 <label for="pic_<%= photo.id %>">
-                  <%= photo.display_tags.mb_chars.slice(0,17).to_s + trail %><br/>
+                  <%= photo.display_tags.mb_chars.slice(0,@tag_chars).to_s + trail %><br/>
                   <%= photo.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
                 </label>
               </span>
@@ -44,8 +47,13 @@
     <% end %>
   </table>
 
-  <% cache(:action => 'index', :action_suffix => "tags") do %>
+  <%= cache(:action => 'index', :action_suffix => "tags_#{@editing}_#{@selected_tags.join '_'}") do %>
     <div id="tags">
+      <% if @editing == "true" %>
+        <%= submit_tag "filter" %>
+        <%= submit_tag "assign" %>
+        <%= submit_tag "remove" %>
+      <% end %>
       <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
         <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
         <% rel = "" %>
@@ -53,14 +61,19 @@
           <% rel = "rel='htmltooltip'" %>
         <% end %>
         <div class="tag_inner" <%= rel %>>
-          <% unless node.photos.empty? %>
+          <% if @editing == "true" %>
             <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
-          <% else %>
-            <%= "&nbsp;".html_safe * 4 %>
-          <% end %>
-          <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-          <% unless node.photos.empty? %>
+            <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
             <%= "(#{node.photos.count})" %>
+          <% else %>
+            <% if @selected_tags.find_index(node.id.to_s).nil? %>
+              <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
+              <% unless node.photos.empty? %>
+                <%= "(#{Photo.tags((@selected_tags + [node.id.to_s]).uniq).count.size})" %>
+              <% end %>
+            <% else %>
+              <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags - [node.id.to_s], :commit => 'filter'), :class => 'selected_tag', :title => "Deselect '#{node.name}'", :method => :post) %>
+            <% end %>
           <% end %>
           <% if node.has_descendants? %>
             <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
@@ -74,11 +87,15 @@
         <%= child %>
         </li>
       <% end %>
-      <%= submit_tag "filter" %>
-      <%= submit_tag "assign" %>
-      <%= submit_tag "remove" %>
+      <% if @editing == "true" %>
+        <%= submit_tag "filter" %>
+        <%= submit_tag "assign" %>
+        <%= submit_tag "remove" %>
+      <% end %>
       <br/>
-      <%= link_to("New tag", :controller => :tags, :action => 'new') %>
+      <% if @editing == "true" %>
+        <%= link_to("New tag", :controller => :tags, :action => 'new') %>
+      <% end %>
     </div>
   <% end %>
 </form>
@@ -89,6 +106,11 @@
     <%= link_to("Descending", :action => 'index', :sort => 'desc') %>
   <% else %>
     <%= link_to("Ascending", :action => 'index', :sort => 'asc') %>
+  <% end %>
+  <% if(@editing.nil? || @editing == "false") %>
+    <%= link_to("Edit", :action => 'index', :edit => "true") %>
+  <% else %>
+    <%= link_to("View", :action => 'index', :edit => "false") %>
   <% end %>
   <br/>
   <% if !@photos.empty? %>
