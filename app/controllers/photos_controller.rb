@@ -68,7 +68,7 @@ class PhotosController < ApplicationController
           photo.tag_ids -= params[:tags]
         end
       end
-      expire_fragment(/tags.*/)
+      expire_fragment(/tags_.*/)
       expire_fragment(/histogram.*/)
     end
     redirect_to(photos_url)
