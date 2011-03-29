@@ -134,6 +134,7 @@ class TagsController < ApplicationController
         last_root = tag
       end
     end
+    expire_fragment(/tags.*/)
     respond_to do |format|
       format.js
     end
