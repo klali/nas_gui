@@ -60,16 +60,14 @@ class PhotosController < ApplicationController
     if(params[:commit].eql?("filter"))
       session[:tags] = params[:tags]
     else
-      photos = params[:pics].map { |p| p.to_i }
+      photos = params[:pics].map { |p| Photo.find p }
       if(params[:commit].eql?("assign"))
-        params[:tags].each do |tag_id|
-          tag = Tag.find tag_id
-          tag.photo_ids += photos
+        photos.each do |photo|
+          photo.tag_ids += params[:tags]
         end
       elsif(params[:commit].eql?"remove")
-        params[:tags].each do |tag_id|
-          tag = Tag.find tag_id
-          tag.photo_ids -= photos
+        photos.each do |photo|
+          photo.tag_ids -= params[:tags]
         end
       end
       expire_fragment(/tags.*/)
