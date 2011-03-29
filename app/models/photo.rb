@@ -16,7 +16,7 @@ class Photo < ActiveRecord::Base
   }
 
   scope :tags, lambda { |tags|
-    joins(join_for_tags(tags))
+    joins(join_for_tags(tags)).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}")
   }
 
   default_scope where(:deleted => false)
@@ -131,8 +131,8 @@ class Photo < ActiveRecord::Base
       count = Photo.count
       photos = Photo.order("taken_at #{sort}").includes(:tags).paginate(:page => page, :total_entries => count)
     else
-      count = Photo.tags(tags).group("photos.id").having("count(pt_group.photo_id) >= #{tags.count}").count.size
-      photos = Photo.tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
+      count = Photo.tags(tags).count.size
+      photos = Photo.tags(tags).includes(:tags).order("photos.taken_at #{sort}").paginate(:page => page, :total_entries => count)
     end
     [photos,count]
   end
@@ -176,7 +176,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.where("taken_at #{symbol} '#{taken_at}'").order("taken_at #{sort}").first
     else
-      photo = Photo.where("taken_at #{symbol} '#{taken_at}'").order("taken_at #{sort}").tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").first
+      photo = Photo.where("taken_at #{symbol} '#{taken_at}'").order("taken_at #{sort}").tags(tags).first
     end
     photo
   end
@@ -188,7 +188,7 @@ class Photo < ActiveRecord::Base
     if(tags.nil? || tags.empty?)
       photo = Photo.order("taken_at #{sort}").first
     else
-      photo = Photo.tags(tags).group('photos.id').having("count(pt_group.photo_id) >= #{tags.count}").order("taken_at #{sort}").first
+      photo = Photo.tags(tags).order("taken_at #{sort}").first
     end
     photo
   end
@@ -239,8 +239,11 @@ class Photo < ActiveRecord::Base
       if(year.eql?last_year)
         last_lmonth = last_month
       end
+      if month_data[year].nil?
+        month_data[year] = {}
+      end
       for month in first_lmonth..last_lmonth
-        unless month_data[year][month]
+        if month_data[year][month].nil?
           num_counts += 1
           month_data[year][month] = 0
         end
