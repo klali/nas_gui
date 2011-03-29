@@ -61,12 +61,10 @@ class PhotosController < ApplicationController
       session[:tags] = params[:tags]
     else
       photos = params[:pics].map { |p| Photo.find p }
-      if(params[:commit].eql?("assign"))
-        photos.each do |photo|
+      photos.each do |photo|
+        if(params[:commit].eql?("assign"))
           photo.tag_ids += params[:tags]
-        end
-      elsif(params[:commit].eql?"remove")
-        photos.each do |photo|
+        elsif(params[:commit].eql?"remove")
           photo.tag_ids -= params[:tags]
         end
       end
