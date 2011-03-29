@@ -133,14 +133,6 @@ class PhotosController < ApplicationController
     @refresh = "/photos/#{nxt.id}/slideshow"
   end
 
-  def rescan
-    scanned = Photo.scan_directory
-    respond_to do |format|
-      format.html { redirect_to(photos_url, :notice => "Rescan done, #{scanned} photos updated.") }
-      format.xml  { head :ok }
-    end
-  end
-
   def rotate_left
     photo = Photo.find(params[:id])
     photo.rotate("left")

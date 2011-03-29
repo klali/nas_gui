@@ -22,7 +22,6 @@ NasGui::Application.routes.draw do
       get 'stars'
     end
     collection do
-      get 'rescan'
       post 'filter_tags'
       get 'histogram'
       post 'toggle_tag'
