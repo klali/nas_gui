@@ -71,7 +71,7 @@
                 <%= node.name %>
               <% else %>
                 <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
-                <%= "(#{Photo.tags((@selected_tags + [node.id.to_s]).uniq).count.size})" %>
+                <%= "(#{Photo.tags(@selected_tags + [node.id.to_s]).count.size})" %>
               <% end %>
             <% else %>
               <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags - [node.id.to_s], :commit => 'filter'), :class => 'selected_tag', :title => "Deselect '#{node.name}'", :method => :post) %>
