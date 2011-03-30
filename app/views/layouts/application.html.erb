@@ -2,16 +2,8 @@
 <html>
 <head>
   <title>NasGui</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag 'jquery.min' %>
-  <%= javascript_include_tag 'rails' %>
-  <%= javascript_include_tag 'facebox' %>
-  <%= javascript_include_tag 'application' %>
-  <%= javascript_include_tag 'jquery.imgareaselect.pack' %>
-  <%= javascript_include_tag 'htmltooltip' %>
-  <%= javascript_include_tag 'jquery-ui-1.8.10.custom.min' %>
-  <%= javascript_include_tag 'jquery.ui.nestedSortable' %>
-  <%= javascript_include_tag 'jquery.raty' %>
+  <%= include_stylesheets :default %>
+  <%= include_javascripts :default %>
   <%= csrf_meta_tag %>
   <% if @refresh %>
     <meta http-equiv="refresh" content="4;url=<%= @refresh %>" />

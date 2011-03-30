@@ -51,10 +51,10 @@ function storeResults(img, selection) {
 };
 
 function saveThumb() {
-  $('input#tag_thumb_id').val($('input#temp_thumb_id').val())
-  $('input#tag_thumb_width').val($('input#temp_thumb_width').val())
-  $('input#tag_thumb_height').val($('input#temp_thumb_height').val())
-  $('input#tag_thumb_x1').val($('input#temp_thumb_x1').val())
-  $('input#tag_thumb_y1').val($('input#temp_thumb_y1').val())
-  $(document).trigger('close.facebox')
+  $('input#tag_thumb_id').val($('input#temp_thumb_id').val());
+  $('input#tag_thumb_width').val($('input#temp_thumb_width').val());
+  $('input#tag_thumb_height').val($('input#temp_thumb_height').val());
+  $('input#tag_thumb_x1').val($('input#temp_thumb_x1').val());
+  $('input#tag_thumb_y1').val($('input#temp_thumb_y1').val());
+  $(document).trigger('close.facebox');
 };

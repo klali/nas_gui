@@ -1,0 +1,21 @@
+embet_assets: on
+javascript_compressor: closure
+
+javascripts:
+  default:
+    - public/javascripts/jquery.js
+    - public/javascripts/rails.js
+    - public/javascripts/facebox.js
+    - public/javascripts/application.js
+    - public/javascripts/jquery.imgareaselect.pack.js
+    - public/javascripts/htmltooltip.js
+    - public/javascripts/jquery-ui-1.8.10.custom.min.js
+    - public/javascripts/jquery.ui.nestedSortable.js
+    - public/javascripts/jquery.raty.js
+
+stylesheets:
+  default:
+    - public/stylesheets/facebox.css
+    - public/stylesheets/imgareaselect-animated.css
+    - public/stylesheets/jquery-ui-1.8.10.custom.css
+    - public/stylesheets/style.css
