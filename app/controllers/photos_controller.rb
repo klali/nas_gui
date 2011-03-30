@@ -61,15 +61,18 @@ class PhotosController < ApplicationController
       session[:tags] = params[:tags]
     else
       photos = params[:pics].map { |p| Photo.find p }
+      tags = params[:tags].map { |t| t.to_i }
       photos.each do |photo|
         if(params[:commit].eql?("assign"))
-          photo.tag_ids += params[:tags]
+          photo.tag_ids += tags
         elsif(params[:commit].eql?"remove")
-          photo.tag_ids -= params[:tags]
+          photo.tag_ids -= tags
         end
       end
       expire_fragment(/tags_.*/)
-      expire_fragment(/histogram.*/)
+      tags.each do |tag|
+        expire_fragment(/histogram.*tags=.*#{tag}.*/)
+      end
     end
     redirect_to(photos_url)
   end
