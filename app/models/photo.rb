@@ -303,47 +303,44 @@ class Photo < ActiveRecord::Base
     y_position = 125
     slice_count = 0
 
-    catch :break do
-      for year in meta[:first_year]..meta[:last_year]
-        first_lmonth = 1
-        last_lmonth = 12
-        if(year.eql?meta[:first_year])
-          first_lmonth = meta[:first_month]
-        end
-        if(year.eql?meta[:last_year])
-          last_lmonth = meta[:last_month]
-        end
-        for month in first_lmonth..last_lmonth
-          if(slice_count == slice)
-            image = Image.new(each_width, height + 50) {
-              self.format = 'png'
-            }
-            gc = Draw.new
-            if(current == "true")
-              gc.stroke('green2')
-            else
-              gc.stroke('gray40')
-            end
-            gc.stroke_width(each_width / 2)
-            count = month_data[year][month]
-            offset = count / factor
-            gc.line(x_position, y_position, x_position, y_position - offset)
-            gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
-              self.pointsize = [each_width / 4, 30].min
-            end
-            gc.annotate(image, each_width, 20, x_position - each_width / 2, y_position + 20, "#{year}-#{Date::ABBR_MONTHNAMES[month]}") do
-              self.pointsize = [each_width / 5, 25].min
-            end
-            gc.draw(image)
-            images.push image
-            throw :break
+    for year in meta[:first_year]..meta[:last_year]
+      first_lmonth = 1
+      last_lmonth = 12
+      if(year.eql?meta[:first_year])
+        first_lmonth = meta[:first_month]
+      end
+      if(year.eql?meta[:last_year])
+        last_lmonth = meta[:last_month]
+      end
+      for month in first_lmonth..last_lmonth
+        if(slice_count == slice)
+          image = Image.new(each_width, height + 50) {
+            self.format = 'png'
+          }
+          gc = Draw.new
+          if(current == "true")
+            gc.stroke('green2')
           else
-            images.push nil
-            slice_count += 1
+            gc.stroke('gray40')
           end
+          gc.stroke_width(each_width / 2)
+          count = month_data[year][month]
+          offset = count / factor
+          gc.line(x_position, y_position, x_position, y_position - offset)
+          gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
+            self.pointsize = [each_width / 4, 30].min
+          end
+          gc.annotate(image, each_width, 20, x_position - each_width / 2, y_position + 20, "#{year}-#{Date::ABBR_MONTHNAMES[month]}") do
+            self.pointsize = [each_width / 5, 25].min
+          end
+          gc.draw(image)
+          return image.to_blob
+        else
+          images.push nil
+          slice_count += 1
         end
       end
     end
-    return images[slice].to_blob
+    return nil
   end
 end
