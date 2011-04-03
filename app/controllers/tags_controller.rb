@@ -1,4 +1,6 @@
 class TagsController < ApplicationController
+  cache_sweeper :tag_sweeper
+
   # GET /tags
   # GET /tags.xml
   def index

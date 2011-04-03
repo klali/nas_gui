@@ -19,6 +19,6 @@ class PhotoSweeper < ActionController::Caching::Sweeper
 
   def expire
     @controller ||= ActionController::Base.new
-    expire_fragment(/photos.*/)
+    expire_fragment(/histogram.*/)
   end
 end
