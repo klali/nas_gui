@@ -4,7 +4,7 @@
   <p id="notice"><%= notice %></p>
   <p><%= page_entries_info @photos %>
 
-  <% cache(:action => 'index', :action_suffix => "histogram_#{@selected_tags.join '_'}") do %>
+  <% cache(:action => 'index', :action_suffix => "histogram_#{@sort}_#{@selected_tags.join '_'}") do %>
     <div class="histogram">
       <ul class="histogram">
         <% @histogram_data.each do |histogram| %>
