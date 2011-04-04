@@ -7,9 +7,9 @@
   <% cache(:action => 'index', :action_suffix => "histogram_#{@selected_tags.join '_'}") do %>
     <div class="histogram">
       <ul class="histogram">
-        <% for histogram in 0..(@histogram_data.count - 1) %>
+        <% @histogram_data.each do |histogram| %>
           <li>
-          <%= link_to(image_tag("/photos/histogram?slice=#{histogram}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{@histogram_data[histogram]}", :id => "histimg_#{histogram}"), :action => :index, :page => @histogram_data[histogram]) %>
+          <%= link_to(image_tag("/photos/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
           </li>
         <% end %>
       </ul>
@@ -156,8 +156,8 @@
       <% end %>
 
       <% @current_hist.each do |current| %>
-        img = $("img#histimg_<%= current %>")
-        img.attr('src', "/photos/histogram?slice=<%=current%>&current=true&tags=<%= @selected_tags.join '_' %>");
+        img = $("img#histimg_<%= "#{current[:year]}_#{current[:month]}" %>")
+        img.attr('src', <%="'/photos/histogram?year=#{current[:year]}&month=#{current[:month]}&max=#{@hist_max}&count=#{current[:count]}&current=true&tags=#{@selected_tags.join '_'}'".html_safe %>);
       <% end %>
 
       <% @selected_tags.each do |tag| %>

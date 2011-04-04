@@ -270,77 +270,53 @@ class Photo < ActiveRecord::Base
       end
       for month in first_lmonth..last_lmonth
         count = month_data[year][month]
-        data.push count
+        data.push({:count => count, :month => month, :year => year})
       end
     end
-    tmp_data = []
     page = 1.0
     if(sort.eql?"desc")
       data = data.reverse
     end
     data.each do |data_i|
-      tmp_data.push(page.to_i)
-      page += data_i.to_f / per_page.to_f
+      data_i[:page] = page.to_i
+      page += data_i[:count].to_f / per_page.to_f
     end
     if(sort.eql?'desc')
-      return tmp_data.reverse
+      return [meta[:max_count], data.reverse]
     else
-      return tmp_data
+      return [meta[:max_count], data]
     end
   end
 
-  def self.get_histogram(tags = [], slice = 0, current = false)
-    month_data,meta = get_raw_histogram(tags)
-
+  def self.get_histogram(count, year, month, max, current)
     height = 100.0
     width = 900.0
-    factor = meta[:max_count] / height
-    #each_width = width / meta[:num_counts]
+    factor = max / height
     each_width = 60
     images = []
 
     x_position = each_width / 2
     y_position = 125
-    slice_count = 0
 
-    for year in meta[:first_year]..meta[:last_year]
-      first_lmonth = 1
-      last_lmonth = 12
-      if(year.eql?meta[:first_year])
-        first_lmonth = meta[:first_month]
-      end
-      if(year.eql?meta[:last_year])
-        last_lmonth = meta[:last_month]
-      end
-      for month in first_lmonth..last_lmonth
-        if(slice_count == slice)
-          image = Image.new(each_width, height + 50) {
-            self.format = 'png'
-          }
-          gc = Draw.new
-          if(current == "true")
-            gc.stroke('green2')
-          else
-            gc.stroke('gray40')
-          end
-          gc.stroke_width(each_width / 2)
-          count = month_data[year][month]
-          offset = count / factor
-          gc.line(x_position, y_position, x_position, y_position - offset)
-          gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
-            self.pointsize = [each_width / 4, 30].min
-          end
-          gc.annotate(image, each_width, 20, x_position - each_width / 2, y_position + 20, "#{year}-#{Date::ABBR_MONTHNAMES[month]}") do
-            self.pointsize = [each_width / 5, 25].min
-          end
-          gc.draw(image)
-          return image.to_blob
-        else
-          images.push nil
-          slice_count += 1
-        end
-      end
+    image = Image.new(each_width, height + 50) {
+      self.format = 'png'
+    }
+    gc = Draw.new
+    if(current == "true")
+      gc.stroke('green2')
+    else
+      gc.stroke('gray40')
     end
-    return nil
+    gc.stroke_width(each_width / 2)
+    offset = count / factor
+    gc.line(x_position, y_position, x_position, y_position - offset)
+    gc.annotate(image, each_width, 20, x_position - each_width / 5, y_position - offset - 5, "#{count}") do
+      self.pointsize = [each_width / 4, 30].min
+    end
+    gc.annotate(image, each_width, 20, x_position - each_width / 2, y_position + 20, "#{year}-#{Date::ABBR_MONTHNAMES[month]}") do
+      self.pointsize = [each_width / 5, 25].min
+    end
+    gc.draw(image)
+    return image.to_blob
   end
 end

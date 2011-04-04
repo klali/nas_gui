@@ -34,21 +34,23 @@ class PhotosController < ApplicationController
       @photos = Photo.get_pagination(1, @selected_tags, @sort).first
     end
 
-    @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
-    @current_hist = []
-    tmp_hist = @histogram_data.index page
+    @hist_max, @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
+    histogram_pages = @histogram_data.map { |data| data[:page] }
+    current_hist_tmp = []
+    tmp_hist = histogram_pages.index page
     if tmp_hist.nil?
       if @sort.eql?"asc"
-        @current_hist.push((@histogram_data + [page]).sort.find_index(page) - 1)
+        current_hist_tmp.push((histogram_pages + [page]).sort.find_index(page) - 1)
       else
-        @current_hist.push((@histogram_data + [page]).sort.reverse.find_index(page))
+        current_hist_tmp.push((histogram_pages + [page]).sort.reverse.find_index(page))
       end
     else
-      @current_hist.push tmp_hist
-      while @histogram_data[tmp_hist += 1] == page do
-        @current_hist.push tmp_hist
+      current_hist_tmp.push tmp_hist
+      while histogram_pages[tmp_hist += 1] == page do
+        current_hist_tmp.push tmp_hist
       end
     end
+    @current_hist = current_hist_tmp.map { |hist| @histogram_data[hist] }
 
     respond_to do |format|
       format.html # index.html.erb
@@ -163,12 +165,10 @@ class PhotosController < ApplicationController
   end
 
   def histogram
-    tags = session[:tags] || []
-    slice = params[:slice] || 1
     current = params[:current] || false
-    send_data(Photo.get_histogram(tags, slice.to_i, current),
+    send_data(Photo.get_histogram(params[:count].to_i, params[:year], params[:month].to_i, params[:max].to_i, current),
                :type => "image/png",
-               :filename => "histogram" + tags.join('_') + "_#{slice}",
+               :filename => "histogram_#{params[:year]}_#{params[:month]}",
                :disposition => 'inline')
   end
 
