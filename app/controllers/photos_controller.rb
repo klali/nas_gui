@@ -192,7 +192,7 @@ class PhotosController < ApplicationController
     tag_names = params[:value].split ','
     tags = tag_names.map { |t| Tag.find_or_create_by_name t.strip }
     @photo.tags = tags
-    expire_for_tags(tags)
+    expire_for_tags(tags.map { |t| t.id })
     respond_to do |format|
       format.js
     end
