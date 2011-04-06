@@ -190,9 +190,10 @@ class PhotosController < ApplicationController
   def update_tags
     @photo = Photo.find(params[:id])
     tag_names = params[:value].split ','
-    tags = tag_names.map { |t| Tag.find_or_create_by_name t.strip }
-    @photo.tags = tags
-    expire_for_tags(tags.map { |t| t.id })
+    tags = tag_names.map { |t| Tag.find_or_create_by_name(t.strip).id }
+    old_tags = @photo.tag_ids
+    @photo.tag_ids = tags
+    expire_for_tags((tags + old_tags).uniq!)
     respond_to do |format|
       format.js
     end
