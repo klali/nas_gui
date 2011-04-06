@@ -8,7 +8,6 @@ gem "nested_set"
 gem 'jquery-rails', '>= 0.2.6'
 gem 'paperclip'
 gem 'jammit'
-gem 'memcache-client'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
