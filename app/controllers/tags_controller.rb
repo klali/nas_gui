@@ -141,4 +141,10 @@ class TagsController < ApplicationController
       format.js
     end
   end
+
+  def complete_tag
+    input = params[:term].split(',').last.strip
+    tags = Tag.where("name like '#{input}%'")
+    render :json => tags.map { |t| t.name }
+  end
 end

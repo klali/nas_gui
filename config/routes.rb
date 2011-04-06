@@ -20,6 +20,7 @@ NasGui::Application.routes.draw do
       get 'slideshow'
       get 'showmodal'
       get 'stars'
+      post 'update_tags'
     end
     collection do
       post 'filter_tags'
@@ -35,6 +36,7 @@ NasGui::Application.routes.draw do
     end
     collection do
       post 'save_list'
+      get 'complete_tag'
     end
   end
 

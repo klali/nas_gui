@@ -6,12 +6,13 @@ javascripts:
     - public/javascripts/jquery.js
     - public/javascripts/rails.js
     - public/javascripts/facebox.js
-    - public/javascripts/application.js
     - public/javascripts/jquery.imgareaselect.pack.js
     - public/javascripts/htmltooltip.js
     - public/javascripts/jquery-ui-1.8.10.custom.min.js
     - public/javascripts/jquery.ui.nestedSortable.js
     - public/javascripts/jquery.raty.js
+    - public/javascripts/jquery.jeditable.js
+    - public/javascripts/application.js
 
 stylesheets:
   default:

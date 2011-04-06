@@ -25,7 +25,7 @@
   </table>
 </div>
 <div id="footer">
-  <%= @photo.display_tags %><br/>
+  <div id="display_tags"><%= @photo.display_tags %></div></br>
   <%= @photo.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>
   <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %>
   <%= link_to "Edit", :action => :edit, :id => @photo.id %>
@@ -44,5 +44,20 @@
           $.get("/photos/<%=@photo.id%>/stars", {stars: score})
           }
         });
-      })
+
+      $('#display_tags').editable("/photos/<%= @photo.id %>/update_tags",
+        { tooltip: 'Click to edit..',
+          type: 'autocomplete',
+          onblur: "submit",
+          autocomplete: {
+            minLength: 2,
+            source: "/tags/complete_tag",
+            focus: function() {
+              return false;
+            },
+            select: selectTag
+          }
+        });
+    });
+  
 </script>

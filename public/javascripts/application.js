@@ -58,3 +58,22 @@ function saveThumb() {
   $('input#tag_thumb_y1').val($('input#temp_thumb_y1').val());
   $(document).trigger('close.facebox');
 };
+
+$.editable.addInputType('autocomplete', {
+  element : $.editable.types.text.element,
+  plugin : function(settings, original) {
+    $('input', this).autocomplete(settings.autocomplete);
+  }
+});
+
+function selectTag(event, ui) {
+  var terms = this.value.split(/,\s*/);
+  // remove the current input
+  terms.pop();
+  // add the selected item
+  terms.push( ui.item.value );
+  // add placeholder to get the comma-and-space at the end
+  //terms.push( "" );
+  this.value = terms.join( ", " );
+  return false;
+}

@@ -71,10 +71,7 @@ class PhotosController < ApplicationController
           photo.tag_ids -= tags
         end
       end
-      expire_fragment(/tags_.*/)
-      tags.each do |tag|
-        expire_fragment(/histogram.*tags=.*#{tag}.*/)
-      end
+      expire_for_tags(tags)
     end
     redirect_to(photos_url)
   end
@@ -187,6 +184,24 @@ class PhotosController < ApplicationController
     end
     respond_to do |format|
       format.js
+    end
+  end
+
+  def update_tags
+    @photo = Photo.find(params[:id])
+    tag_names = params[:value].split ','
+    tags = tag_names.map { |t| Tag.find_or_create_by_name t.strip }
+    @photo.tags = tags
+    expire_for_tags(tags)
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def expire_for_tags(tags)
+    expire_fragment(/tags_.*/)
+    tags.each do |tag|
+      expire_fragment(/histogram.*tags=.*#{tag}.*/)
     end
   end
 end

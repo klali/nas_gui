@@ -6,6 +6,8 @@ class Tag < ActiveRecord::Base
   acts_as_nested_set
   has_attached_file :thumbnail
 
+  default_scope order(:lft)
+
   def get_first_photo
     Photo.joins("join photos_tags pt on pt.photo_id = photos.id").where("pt.tag_id = #{id} and photos.deleted = false").order('photos.taken_at desc').first
   end

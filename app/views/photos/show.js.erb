@@ -9,7 +9,7 @@ $('#photo').html('<%= link_to(image_tag(@photo.image.url(:medium), :border => 0,
 <% else %>
   $('#next').html('<%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
-$('#footer').html('<%= @photo.display_tags %><br/><%= @photo.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
+$('#footer').html('<div id="display_tags"><%= @photo.display_tags %></div><%= @photo.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
 $('#stars').html('<div id="stars"></div>');
 
 $(function() {
@@ -23,6 +23,20 @@ $(function() {
         $.get("/photos/<%=@photo.id%>/stars", {stars: score})
       }
     });
+
+    $('#display_tags').editable("/photos/<%= @photo.id %>/update_tags",
+      { tooltip: 'Click to edit..',
+        type: 'autocomplete',
+        onblur: "submit",
+        autocomplete: {
+          minLength: 2,
+          source: "/tags/complete_tag",
+          focus: function() {
+            return false;
+          },
+          select: selectTag
+        }
+      });
   })
 
 jQuery(document).trigger('reveal.facebox');
