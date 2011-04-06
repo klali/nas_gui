@@ -8,6 +8,8 @@ class Tag < ActiveRecord::Base
 
   default_scope order(:lft)
 
+  validates :name, :presence => true, :uniqueness => true, :format => {:with => /^[^\,]+$/, :message => "Tag name can't contain ','."}
+
   def get_first_photo
     Photo.joins("join photos_tags pt on pt.photo_id = photos.id").where("pt.tag_id = #{id} and photos.deleted = false").order('photos.taken_at desc').first
   end
