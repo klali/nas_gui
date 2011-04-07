@@ -62,7 +62,16 @@ function saveThumb() {
 $.editable.addInputType('autocomplete', {
   element : $.editable.types.text.element,
   plugin : function(settings, original) {
-    $('input', this).autocomplete(settings.autocomplete);
+    $('input', this).autocomplete(settings.autocomplete)
+      .bind("keydown", function(event) {
+        var auto = $(this).data("autocomplete");
+        if ( event.keyCode === $.ui.keyCode.TAB) {
+          if(auto.menu.element.is(":visible")) {
+            auto._move("next", event);
+            event.preventDefault();
+          }
+        }
+        });
   }
 });
 
