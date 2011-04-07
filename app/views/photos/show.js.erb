@@ -3,7 +3,7 @@
 <% else %>
   $('#prev').html('<%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
 <% end %>
-$('#photo').html('<%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags), @photo.image.url) %>');
+$('#photo').html('<%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags, :id => "display_photo_#{@photo.id}"), @photo.image.url) %>');
 <% if @next.nil? %>
   $('#next').html('');
 <% else %>
@@ -28,7 +28,12 @@ $(function() {
       { tooltip: 'Click to edit..',
         type: 'autocomplete',
         onblur: "submit",
-        autocomplete: {
+        callback: function(value, settings) {
+          $.get("/photos/<%=@photo.id%>/update_tag_display", {
+            old_tags: $("#display_photo_<%=@photo.id%>").attr('title')
+          });
+        },
+autocomplete: {
           minLength: 2,
           source: "/tags/complete_tag",
           focus: function() {

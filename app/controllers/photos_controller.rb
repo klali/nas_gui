@@ -203,4 +203,21 @@ class PhotosController < ApplicationController
       expire_fragment(/histogram.*tags=.*#{tag}.*/)
     end
   end
+
+  def update_tag_display
+    @photo = Photo.find(params[:id])
+    old_tags = params[:old_tags].split(', ').map { |t| Tag.find_by_name t }
+    @tags = (old_tags + @photo.tags).uniq
+    @selected_tags = session[:tags] || []
+    @editing = session[:editing] || "false"
+    if(@editing == "false")
+      @tag_chars = 20
+    else
+      @tag_chars = 17
+    end
+    logger.info @selected_tags.inspect
+    respond_to do |format|
+      format.js
+    end
+  end
 end

@@ -11,7 +11,7 @@
       </td>
       <td>
         <div id="photo">
-          <%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags), @photo.image.url) %><br/>
+          <%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags, :id => "display_photo_#{@photo.id}"), @photo.image.url) %><br/>
         </div>
       </td>
       <td>
@@ -41,7 +41,7 @@
           start: <%= @photo.stars %>,
         <% end %>
         click: function(score) {
-          $.get("/photos/<%=@photo.id%>/stars", {stars: score})
+          $.get("/photos/<%=@photo.id%>/stars", {stars: score});
           }
         });
 
@@ -49,6 +49,11 @@
         { tooltip: 'Click to edit..',
           type: 'autocomplete',
           onblur: "submit",
+          callback: function(value, settings) {
+            $.get("/photos/<%=@photo.id%>/update_tag_display", {
+              old_tags: $("#display_photo_<%=@photo.id%>").attr('title')
+              });
+          },
           autocomplete: {
             minLength: 2,
             source: "/tags/complete_tag",

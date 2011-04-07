@@ -21,6 +21,7 @@ NasGui::Application.routes.draw do
       get 'showmodal'
       get 'stars'
       post 'update_tags'
+      get 'update_tag_display'
     end
     collection do
       post 'filter_tags'
