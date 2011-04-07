@@ -95,8 +95,12 @@ class Photo < ActiveRecord::Base
     exif.save
   end
 
-  def display_tags
-    tags.map{ |tag| tag.name }.join(', ')
+  def display_tags(trimcount = nil)
+    display = tags.map{ |tag| tag.name }.join(', ')
+    if(!trimcount.nil? && display.mb_chars.size > trimcount)
+      display = display.mb_chars.slice(0, trimcount) + "..."
+    end
+    display
   end
 
   def rotate(direction)

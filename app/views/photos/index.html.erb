@@ -30,11 +30,11 @@
               <% if @editing == "true" %>
                 <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter, :id => "pic_#{photo.id}" %>
               <% end %>
-              <span class="thumb_tags" title="<%= photo.display_tags %>">
-                <% trail = "" %>
-                <% trail = "..." if photo.display_tags.mb_chars.size > @tag_chars %>
+              <span class="thumb_tags" id="spantag_<%= photo.id %>" title="<%= photo.display_tags %>">
                 <label for="pic_<%= photo.id %>">
-                  <%= photo.display_tags.mb_chars.slice(0,@tag_chars).to_s + trail %><br/>
+                  <div id="displaytag_<%= photo.id %>">
+                    <%= photo.display_tags(@tag_chars) %>
+                  </div>
                   <%= photo.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
                 </label>
               </span>
@@ -64,14 +64,18 @@
           <% if @editing == "true" %>
             <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
             <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-            <%= "(#{node.photos.count})" %>
+            <span id="tag_count_<%= node.id %>">
+              <%= "(#{node.photos.count})" %>
+            </span>
           <% else %>
             <% if @selected_tags.find_index(node.id.to_s).nil? %>
               <% if node.photos.empty? %>
                 <%= node.name %>
               <% else %>
                 <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
-                <%= "(#{Photo.tags(@selected_tags + [node.id.to_s]).count.size})" %>
+                <span id="tag_count_<%= node.id %>">
+                  <%= "(#{Photo.tags(@selected_tags + [node.id.to_s]).count.size})" %>
+                </span>
               <% end %>
             <% else %>
               <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags - [node.id.to_s], :commit => 'filter'), :class => 'selected_tag', :title => "Deselect '#{node.name}'", :method => :post) %>
