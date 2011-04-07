@@ -25,7 +25,7 @@
   </table>
 </div>
 <div id="footer">
-  <div id="display_tags"><%= @photo.display_tags %></div></br>
+  <div id="display_tags"><%= @photo.display_tags %></div>
   <%= @photo.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>
   <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %>
   <%= link_to "Edit", :action => :edit, :id => @photo.id %>
