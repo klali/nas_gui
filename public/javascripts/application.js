@@ -86,3 +86,14 @@ function selectTag(event, ui) {
   this.value = terms.join( ", " );
   return false;
 }
+
+function setSlideDimensions() {
+  var myImage = $('img.slide');
+  if((myImage.width() / $(window).width()) > (myImage.height() / $(window).height())){
+    myImage.width("99%");
+  } else {
+    myImage.height("99%");
+  }
+
+  myImage.css('margin-top',  Math.ceil(($(window).height() - myImage.height()) / 2));
+}

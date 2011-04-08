@@ -4,13 +4,10 @@
 
 <script type="text/javascript">
   $(function(){
-    var myImage = $('img.slide');
-    if((myImage.width() / $(window).width()) > (myImage.height() / $(window).height())){
-      myImage.width("99%");
-    } else {
-      myImage.height("99%");
-    }
+      setSlideDimensions();
 
-    myImage.css('margin-top',  Math.ceil(($(window).height() - myImage.height()) / 2));
-    });
+      $(window).resize(function(){
+        setSlideDimensions();
+        });
+      });
 </script>
