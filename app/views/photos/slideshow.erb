@@ -5,7 +5,7 @@
 <script type="text/javascript">
   $(function(){
     var myImage = $('img.slide');
-    if(myImage.width() / document.body.clientWidth > myImage.height() / document.body.clientHeight){
+    if((myImage.width() / $(window).width()) > (myImage.height() / $(window).height())){
       myImage.width("99%");
     } else {
       myImage.height("99%");
