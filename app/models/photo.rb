@@ -2,7 +2,7 @@ require 'RMagick'
 include Magick
 
 class Photo < ActiveRecord::Base
-  has_and_belongs_to_many :tags, :order => "lft asc"
+  has_and_belongs_to_many :tags
   has_attached_file :image, :styles => {
     :medium => {
       :geometry => '700x700>',
