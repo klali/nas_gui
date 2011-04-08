@@ -215,7 +215,6 @@ class PhotosController < ApplicationController
     else
       @tag_chars = 17
     end
-    logger.info @selected_tags.inspect
     respond_to do |format|
       format.js
     end
