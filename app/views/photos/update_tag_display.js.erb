@@ -1,0 +1,10 @@
+$("#display_photo_<%=@photo.id%>").attr('title', "<%= @photo.display_tags %>");
+$("#display_tags").html("<%= @photo.display_tags %>");
+$("#displaytag_<%=@photo.id%>").html("<%= @photo.display_tags(@tag_chars) %>");
+<% @tags.each do |tag| %>
+  <% if @editing == "false" %>
+    $("#tag_count_<%= tag.id %>").html("(<%= Photo.tags((@selected_tags + [tag.id.to_s]).uniq).count.size %>)");
+  <% else %>
+    $("#tag_count_<%= tag.id %>").html("(<%= tag.photos.count %>)");
+  <% end %>
+<% end %>
