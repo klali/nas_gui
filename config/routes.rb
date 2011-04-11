@@ -13,7 +13,7 @@ NasGui::Application.routes.draw do
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
-  resources :photos do
+  resources :media do
     member do
       get 'rotate_left'
       get 'rotate_right'

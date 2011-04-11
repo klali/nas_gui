@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110310085706) do
+ActiveRecord::Schema.define(:version => 20110411065836) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(:version => 20110310085706) do
 
   add_index "configurations", ["key"], :name => "index_configurations_on_key", :unique => true
 
-  create_table "photos", :force => true do |t|
+  create_table "media", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -41,17 +41,18 @@ ActiveRecord::Schema.define(:version => 20110310085706) do
     t.integer  "thumb_height"
     t.integer  "medium_size"
     t.integer  "thumb_size"
+    t.string   "type"
   end
 
-  add_index "photos", ["path"], :name => "index_photos_on_path", :unique => true
-  add_index "photos", ["taken_at"], :name => "index_photos_on_taken_at"
+  add_index "media", ["path"], :name => "index_photos_on_path", :unique => true
+  add_index "media", ["taken_at"], :name => "index_photos_on_taken_at"
 
-  create_table "photos_tags", :id => false, :force => true do |t|
-    t.integer "photo_id"
+  create_table "media_tags", :id => false, :force => true do |t|
+    t.integer "media_id"
     t.integer "tag_id"
   end
 
-  add_index "photos_tags", ["photo_id", "tag_id"], :name => "index_photos_tags_on_photo_id_and_tag_id", :unique => true
+  add_index "media_tags", ["media_id", "tag_id"], :name => "index_photos_tags_on_photo_id_and_tag_id", :unique => true
 
   create_table "tags", :force => true do |t|
     t.string   "name"

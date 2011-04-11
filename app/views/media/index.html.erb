@@ -2,46 +2,46 @@
 
 <div id="container">
   <p id="notice"><%= notice %></p>
-  <p><%= page_entries_info @photos %>
+  <p><%= page_entries_info @media %>
 
   <% cache(:action => 'index', :action_suffix => "histogram_#{@sort}_#{@selected_tags.join '_'}") do %>
     <div class="histogram">
       <ul class="histogram">
         <% @histogram_data.each do |histogram| %>
           <li>
-          <%= link_to(image_tag("/photos/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
+          <%= link_to(image_tag("/media/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
           </li>
         <% end %>
       </ul>
     </div>
   <% end %>
-  <%= form_tag('/photos/filter_tags') %>
+  <%= form_tag('/media/filter_tags') %>
   <table id="photos">
     <% counter = 0 %>
-    <% @photos.each do |photo| %>
+    <% @media.each do |media| %>
       <% if counter % 6 == 0 %>
         <tr id="counter_<%= counter %>">
         <% end %>
-          <td id="photo_<%= photo.id %>" class="thumbnail">
+          <td id="photo_<%= media.id %>" class="thumbnail">
             <div class="thumbnail_inner">
-            <%= link_to(image_tag(photo.image.url(:thumbnail), :title => "#{photo.path}", :border => 0), {:action => :show, :id => photo.id}, {:rel => "facebox"}) %>
+            <%= link_to(image_tag(media.image.url(:thumbnail), :title => "#{media.path}", :border => 0), {:action => :show, :id => media.id}, {:rel => "facebox"}) %>
             <div class="thumb_footer">
               <% counter += 1 %>
               <% if @editing == "true" %>
-                <%= check_box_tag "pics[]", "#{photo.id}", false, :class => "pic_select", :tabindex => counter, :id => "pic_#{photo.id}" %>
+                <%= check_box_tag "pics[]", "#{media.id}", false, :class => "pic_select", :tabindex => counter, :id => "pic_#{media.id}" %>
               <% end %>
-              <span class="thumb_tags" id="spantag_<%= photo.id %>" title="<%= photo.display_tags %>">
-                <label for="pic_<%= photo.id %>">
-                  <div id="displaytag_<%= photo.id %>">
-                    <%= photo.display_tags(@tag_chars) %>
+              <span class="thumb_tags" id="spantag_<%= media.id %>" title="<%= media.display_tags %>">
+                <label for="pic_<%= media.id %>">
+                  <div id="displaytag_<%= media.id %>">
+                    <%= media.display_tags(@tag_chars) %>
                   </div>
-                  <%= photo.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
+                  <%= media.taken_at.strftime("%Y-%m-%d %H:%m:%S") %>
                 </label>
               </span>
             </div>
           </div>
           </td>
-        <% if counter % 6 == 0 || counter == @photos.count %>
+        <% if counter % 6 == 0 || counter == @media.count %>
         </tr>
       <% end %>
     <% end %>
@@ -65,16 +65,16 @@
             <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
             <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
             <span id="tag_count_<%= node.id %>">
-              <%= "(#{node.photos.count})" %>
+              <%= "(#{node.media.count})" %>
             </span>
           <% else %>
             <% if @selected_tags.find_index(node.id.to_s).nil? %>
-              <% if node.photos.empty? %>
+              <% if node.media.empty? %>
                 <%= node.name %>
               <% else %>
                 <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
                 <span id="tag_count_<%= node.id %>">
-                  <%= "(#{Photo.tags(@selected_tags + [node.id.to_s]).count.size})" %>
+                  <%= "(#{Media.tags(@selected_tags + [node.id.to_s]).count.size})" %>
                 </span>
               <% end %>
             <% else %>
@@ -119,17 +119,17 @@
     <%= link_to("View", :action => 'index', :edit => "false") %>
   <% end %>
   <br/>
-  <% if !@photos.empty? %>
-    <%= link_to "Start slideshow", :action => 'slideshow', :id => @photos.first.id %>
+  <% if !@media.empty? %>
+    <%= link_to "Start slideshow", :action => 'slideshow', :id => @media.first.id %>
   <% end %>
-  <%= will_paginate @photos %>
+  <%= will_paginate @media %>
 </div>
 </div>
 <script type="text/javascript">
 
   $('img.folding_arrow').click(function(e){
       $(this).parent().parent().children("ul").toggle('fast', function(){
-        $.post("/photos/toggle_tag", {tag: $(this).parent().attr('tag'), hidden: $(this).is(':hidden')});
+        $.post("/media/toggle_tag", {tag: $(this).parent().attr('tag'), hidden: $(this).is(':hidden')});
         });
       });
 
@@ -149,7 +149,7 @@
 
   $(function($) {
       <% unless @modal.nil? %>
-        jQuery.facebox({ajax: "/photos/<%= @modal %>"});
+        jQuery.facebox({ajax: "/media/<%= @modal %>"});
       <% end %>
 
       <% @hidden_tags.each do |tag| %>
@@ -161,7 +161,7 @@
 
       <% @current_hist.each do |current| %>
         img = $("img#histimg_<%= "#{current[:year]}_#{current[:month]}" %>")
-        img.attr('src', <%="'/photos/histogram?year=#{current[:year]}&month=#{current[:month]}&max=#{@hist_max}&count=#{current[:count]}&current=true&tags=#{@selected_tags.join '_'}'".html_safe %>);
+        img.attr('src', <%="'/media/histogram?year=#{current[:year]}&month=#{current[:month]}&max=#{@hist_max}&count=#{current[:count]}&current=true&tags=#{@selected_tags.join '_'}'".html_safe %>);
       <% end %>
 
       <% @selected_tags.each do |tag| %>

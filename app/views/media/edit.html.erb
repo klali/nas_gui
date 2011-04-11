@@ -4,7 +4,7 @@
 
 <div id="rotate">
   <div id="thumbnail">
-    <%= image_tag @photo.image.url(:thumbnail) %>
+    <%= image_tag @media.image.url(:thumbnail) %>
   </div>
   <div id="rotate_left">
     <%= link_to(image_tag("rotate_left.png", :height => "50", :width => "50", :border => 0), :action => :rotate_left) %>
@@ -16,4 +16,4 @@
 
 <%= render 'form' %>
 
-<%= link_to 'Back', :action => :index, :modal => @photo.id %>
+<%= link_to 'Back', :action => :index, :modal => @media.id %>

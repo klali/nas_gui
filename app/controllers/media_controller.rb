@@ -1,11 +1,9 @@
-class PhotosController < ApplicationController
+class MediaController < ApplicationController
   caches_action :histogram, :cache_path => Proc.new { |controller|
     controller.params
   }
-  cache_sweeper :photo_sweeper
+  cache_sweeper :media_sweeper
 
-  # GET /photos
-  # GET /photos.xml
   def index
     page = (params[:page] || session[:page] || 1).to_i
     session[:page] = page
@@ -28,13 +26,13 @@ class PhotosController < ApplicationController
       @tag_chars = 17
     end
 
-    @photos, @count = Photo.get_pagination(page, @selected_tags, @sort)
-    if(page.to_i > @photos.total_pages)
+    @media, @count = Media.get_pagination(page, @selected_tags, @sort)
+    if(page.to_i > @media.total_pages)
       session[:page] = 1
-      @photos = Photo.get_pagination(1, @selected_tags, @sort).first
+      @media = Media.get_pagination(1, @selected_tags, @sort).first
     end
 
-    @hist_max, @histogram_data = Photo.get_histogram_data(@selected_tags, @sort)
+    @hist_max, @histogram_data = Media.get_histogram_data(@selected_tags, @sort)
     histogram_pages = @histogram_data.map { |data| data[:page] }
     current_hist_tmp = []
     tmp_hist = histogram_pages.index page
@@ -54,7 +52,7 @@ class PhotosController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @photos }
+      format.xml  { render :xml => @media }
     end
   end
 
@@ -62,62 +60,57 @@ class PhotosController < ApplicationController
     if(params[:commit].eql?("filter"))
       session[:tags] = params[:tags]
     else
-      photos = params[:pics].map { |p| Photo.find p }
+      medias = params[:pics].map { |p| Media.find p }
       tags = params[:tags].map { |t| t.to_i }
-      photos.each do |photo|
+      medias.each do |media|
         if(params[:commit].eql?("assign"))
-          photo.tag_ids += tags
+          media.tag_ids += tags
         elsif(params[:commit].eql?"remove")
-          photo.tag_ids -= tags
+          media.tag_ids -= tags
         end
       end
       expire_for_tags(tags)
     end
-    redirect_to(photos_url)
+    redirect_to(media_url)
   end
 
   def show
-    @photo = Photo.find(params[:id])
+    @media = Media.find(params[:id])
 
     page = session[:page].to_i || 1
     tags = session[:tags] || []
     sort = session[:sort] || "desc"
-    @next = @photo.get_next(sort, tags)
-    @prev = @photo.get_previous(sort, tags)
+    @next = @media.get_next(sort, tags)
+    @prev = @media.get_previous(sort, tags)
     respond_to do |format|
       format.html {render :layout => false}
       format.js
     end
   end
 
-  # GET /photos/new
-  # GET /photos/new.xml
   def new
-    @photo = Photo.new
+    @media = Media.new
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @photo }
+      format.xml  { render :xml => @media }
     end
   end
 
-  # GET /photos/1/edit
   def edit
-    @photo = Photo.find(params[:id])
+    @media = Media.find(params[:id])
   end
 
-  # PUT /photos/1
-  # PUT /photos/1.xml
   def update
-    photo = Photo.find(params[:id])
+    media = Media.find(params[:id])
 
     respond_to do |format|
-      if photo.update_attributes(params[:photo])
-        format.html { redirect_to(:action => :index, :modal => photo.id, :notice => 'Photo was successfully updated.')}
+      if media.update_attributes(params[:media])
+        format.html { redirect_to(:action => :index, :modal => media.id, :notice => 'Media was successfully updated.')}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => photo.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => media.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -125,14 +118,14 @@ class PhotosController < ApplicationController
   def slideshow
     tags = session[:tags] || []
     page = session[:page].to_i || 1
-    @photo = Photo.find params[:id]
+    @media = Media.find params[:id]
     sort = session[:sort] || "desc"
     @class = "slide"
-    nxt = @photo.get_next(sort,tags)
+    nxt = @media.get_next(sort,tags)
     if(nxt.nil?)
-      nxt = Photo.get_first(sort, tags)
+      nxt = Media.get_first(sort, tags)
     end
-    @refresh = "/photos/#{nxt.id}/slideshow"
+    @refresh = "/media/#{nxt.id}/slideshow"
   end
 
   def rotate_left
@@ -152,10 +145,10 @@ class PhotosController < ApplicationController
   end
 
   def stars
-    @photo = Photo.find(params[:id])
+    @media = Media.find(params[:id])
     stars = params[:stars]
-    @photo.stars = stars
-    @photo.save
+    @media.stars = stars
+    @media.save
     respond_to do |format|
       format.js
     end
@@ -163,7 +156,7 @@ class PhotosController < ApplicationController
 
   def histogram
     current = params[:current] || false
-    send_data(Photo.get_histogram(params[:count].to_i, params[:year], params[:month].to_i, params[:max].to_i, current),
+    send_data(Media.get_histogram(params[:count].to_i, params[:year], params[:month].to_i, params[:max].to_i, current),
                :type => "image/png",
                :filename => "histogram_#{params[:year]}_#{params[:month]}",
                :disposition => 'inline')
@@ -188,13 +181,13 @@ class PhotosController < ApplicationController
   end
 
   def update_tags
-    photo = Photo.find(params[:id])
+    media = Media.find(params[:id])
     tag_names = params[:value].split ','
     tags = tag_names.map { |t| Tag.find_or_create_by_name(t.strip).id }
-    old_tags = photo.tag_ids
-    photo.tag_ids = tags
+    old_tags = media.tag_ids
+    media.tag_ids = tags
     expire_for_tags((tags + old_tags).uniq!)
-    render :text => photo.display_tags
+    render :text => media.display_tags
   end
 
   def expire_for_tags(tags)
@@ -205,9 +198,9 @@ class PhotosController < ApplicationController
   end
 
   def update_tag_display
-    @photo = Photo.find(params[:id])
+    @media = Media.find(params[:id])
     old_tags = params[:old_tags].split(', ').map { |t| Tag.find_by_name t }
-    @tags = (old_tags + @photo.tags).uniq
+    @tags = (old_tags + @media.tags).uniq
     @selected_tags = session[:tags] || []
     @editing = session[:editing] || "false"
     if(@editing == "false")

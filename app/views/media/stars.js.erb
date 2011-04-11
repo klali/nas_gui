@@ -3,11 +3,11 @@ $(function() {
     $('#stars').raty({
       half: true,
       path: "/images/",
-      <% unless @photo.stars.nil? %>
-        start: <%= @photo.stars %>,
+      <% unless @media.stars.nil? %>
+        start: <%= @media.stars %>,
       <% end %>
       click: function(score) {
-        $.get("/photos/<%=@photo.id%>/stars", {stars: score})
+        $.get("/media/<%=@media.id%>/stars", {stars: score})
       }
     });
   })

@@ -3,34 +3,34 @@
 <% else %>
   $('#prev').html('<%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
 <% end %>
-$('#photo').html('<%= link_to(image_tag(@photo.image.url(:medium), :border => 0, :title => @photo.display_tags, :id => "display_photo_#{@photo.id}"), @photo.image.url) %>');
+$('#photo').html('<%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %>');
 <% if @next.nil? %>
   $('#next').html('');
 <% else %>
   $('#next').html('<%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
 <% end %>
-$('#footer').html('<div id="display_tags"><%= @photo.display_tags %></div><%= @photo.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @photo.id %> <%= link_to "Edit", :action => :edit, :id => @photo.id %>');
+$('#footer').html('<div id="display_tags"><%= @media.display_tags %></div><%= @media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @media.id %> <%= link_to "Edit", :action => :edit, :id => @media.id %>');
 $('#stars').html('<div id="stars"></div>');
 
 $(function() {
     $('#stars').raty({
       half: true,
       path: "/images/",
-      <% unless @photo.stars.nil? %>
-        start: <%= @photo.stars %>,
+      <% unless @media.stars.nil? %>
+        start: <%= @media.stars %>,
       <% end %>
       click: function(score) {
-        $.get("/photos/<%=@photo.id%>/stars", {stars: score})
+        $.get("/media/<%=@media.id%>/stars", {stars: score})
       }
     });
 
-    $('#display_tags').editable("/photos/<%= @photo.id %>/update_tags",
+    $('#display_tags').editable("/media/<%= @media.id %>/update_tags",
       { tooltip: 'Click to edit..',
         type: 'autocomplete',
         onblur: "submit",
         callback: function(value, settings) {
-          $.get("/photos/<%=@photo.id%>/update_tag_display", {
-            old_tags: $("#display_photo_<%=@photo.id%>").attr('title')
+          $.get("/media/<%=@media.id%>/update_tag_display", {
+            old_tags: $("#display_photo_<%=@media.id%>").attr('title')
           });
         },
 autocomplete: {

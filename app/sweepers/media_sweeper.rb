@@ -1,4 +1,4 @@
-class PhotoSweeper < ActionController::Caching::Sweeper
+class MediaSweeper < ActionController::Caching::Sweeper
   observe Photo
 
   def self.update

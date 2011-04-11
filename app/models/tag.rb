@@ -2,7 +2,7 @@ require 'RMagick'
 include Magick
 
 class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :photos
+  has_and_belongs_to_many :media
   acts_as_nested_set
   has_attached_file :thumbnail
 
@@ -11,7 +11,7 @@ class Tag < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true, :format => {:with => /^[^\,]+$/, :message => "Tag name can't contain ','."}
 
   def get_first_photo
-    Photo.joins("join photos_tags pt on pt.photo_id = photos.id").where("pt.tag_id = #{id} and photos.deleted = false").order('photos.taken_at desc').first
+    Media.joins("join media_tags pt on pt.photo_id = media.id").where("pt.tag_id = #{id} and media.deleted = false").order('media.taken_at desc').first
   end
 
   def thumb_id=(id)
