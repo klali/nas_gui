@@ -8,6 +8,10 @@ class Tag < ActiveRecord::Base
 
   default_scope order(:lft)
 
+  scope :search, lambda { |name|
+    where("upper(name) like upper('#{name}%')")
+  }
+
   validates :name, :presence => true, :uniqueness => true, :format => {:with => /^[^\,]+$/, :message => "Tag name can't contain ','."}
 
   def get_first_photo
