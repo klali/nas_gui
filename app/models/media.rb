@@ -11,14 +11,6 @@ class Media < ActiveRecord::Base
     with_exclusive_scope{Media.find_by_path path}
   end
 
-  def taken_at=(date)
-    self['taken_at'] = date
-    save
-    exif = MiniExiftool.new path
-    exif.date_time_original = date
-    exif.save
-  end
-
   def display_tags(trimcount = nil)
     display = tags.map{ |tag| tag.name }.join(', ')
     if(!trimcount.nil? && display.mb_chars.size > trimcount)

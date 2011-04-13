@@ -26,6 +26,11 @@ div#rotate_left {
   width: 12%;
 }
 
+.video_preview {
+  position: relative;
+  margin: 0 auto;
+}
+
 li.tag {
   list-style-type: none;
 }
@@ -125,4 +130,14 @@ a:hover {
 
 a.selected_tag {
   font-weight: bold;
+}
+
+.image_preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.preview_row {
+  height: 175px;
 }

@@ -20,11 +20,17 @@
     <% counter = 0 %>
     <% @media.each do |media| %>
       <% if counter % 6 == 0 %>
-        <tr id="counter_<%= counter %>">
+        <tr id="counter_<%= counter %>" class="preview_row">
         <% end %>
           <td id="photo_<%= media.id %>" class="thumbnail">
             <div class="thumbnail_inner">
-            <%= link_to(image_tag(media.image.url(:thumbnail), :title => "#{media.path}", :border => 0), {:action => :show, :id => media.id}, {:rel => "facebox"}) %>
+              <div class="video_preview" id="preview_<%=media.id%>" style="width: <%=media.thumb_width%>px; height: <%=media.thumb_height%>px;">
+                <% if media.is_a?Photo %>
+                  <%= link_to(image_tag(media.image.url(:thumbnail), :title => "#{media.path}", :border => 0, :class => 'image_preview'), {:action => :show, :id => media.id}, {:rel => "facebox"}) %>
+                <% elsif media.is_a?Video %>
+                  <%= link_to(image_tag(media.video_captures.first.thumbnail.url, :title => media.path, :border => 0, :class => 'image_preview'), {:action => :show, :id => media.id}, {:rel => "facebox"}) %>
+                <% end %>
+              </div>
             <div class="thumb_footer">
               <% counter += 1 %>
               <% if @editing == "true" %>
@@ -167,6 +173,20 @@
       <% @selected_tags.each do |tag| %>
         box = $("input[name='tags[]'][value='<%=tag%>']");
         box.attr('checked', true);
+      <% end %>
+
+      <% @media.each do |media| %>
+        <% if media.is_a?Video %>
+          $("#preview_<%=media.id%>").cjImageVideoPreviewer({
+              "images": [
+              <% media.video_captures.each do |vc| %>
+                <% next if vc.sort == 1 %>
+                <%= "'#{vc.thumbnail.url}',"%>
+              <% end %>
+              ],
+              "showProgress": false
+              });
+        <% end %>
       <% end %>
       })
 </script>

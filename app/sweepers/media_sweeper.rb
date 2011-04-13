@@ -1,5 +1,5 @@
 class MediaSweeper < ActionController::Caching::Sweeper
-  observe Photo
+  observe Photo, Video
 
   def self.update
     puts "kaka"

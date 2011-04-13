@@ -12,6 +12,7 @@ javascripts:
     - public/javascripts/jquery.ui.nestedSortable.js
     - public/javascripts/jquery.raty.js
     - public/javascripts/jquery.jeditable.js
+    - public/javascripts/jquery.cj-image-video-previewer.js
     - public/javascripts/application.js
 
 stylesheets:

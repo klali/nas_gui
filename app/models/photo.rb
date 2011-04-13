@@ -99,4 +99,12 @@ class Photo < Media
     set_sizes
     self
   end
+
+  def taken_at=(date)
+    self['taken_at'] = date
+    save
+    exif = MiniExiftool.new path
+    exif.date_time_original = date
+    exif.save
+  end
 end

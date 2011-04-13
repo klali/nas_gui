@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110411065836) do
+ActiveRecord::Schema.define(:version => 20110412053844) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -73,5 +73,16 @@ ActiveRecord::Schema.define(:version => 20110411065836) do
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
+
+  create_table "video_captures", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "thumbnail_file_name"
+    t.string   "thumbnail_content_type"
+    t.integer  "thumbnail_file_size"
+    t.datetime "thumbnail_updated_at"
+    t.integer  "video_id"
+    t.integer  "sort"
+  end
 
 end
