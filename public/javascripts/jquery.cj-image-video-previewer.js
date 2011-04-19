@@ -277,7 +277,7 @@
 					"cursor": settings.autoPlay ? "" : "pointer",
 					"z-index": 100
 				}).click(function () {
-					document.location.href = link;
+          document.location.href = link;
 				}));
 			}
 

@@ -2,6 +2,12 @@ require 'RMagick'
 include Magick
 
 class Video < Media
+  has_attached_file :image, :styles => {
+    :theora => {
+      :geometry => '700x700',
+      :format => :ogv,
+    }
+  }, :processors => [:video_transcoder]
   has_many :video_captures, :dependent => :destroy, :order => :sort
 
   def self.add_or_update(file, force_update = false)
@@ -20,17 +26,22 @@ class Video < Media
     v.taken_at = stat.ctime
     v.save
     v.generate_captures
-    path = v.video_captures.first.thumbnail.path
-    t = Image.read(path).first
+    thumb_path = v.video_captures.first.thumbnail.path
+    t = Image.read(thumb_path).first
     v.thumb_width = t.columns
     v.thumb_height = t.rows
     t.destroy!
-    v.thumb_size = File.stat(path).size
+    v.thumb_size = File.stat(thumb_path).size
+    f = File.open(v.path)
+    v.image = f
     v.save
     v
   end
 
   def generate_captures
+    video_captures.each do |vc|
+      vc.destroy
+    end
     Dir.mktmpdir do |dir|
       system("ffmpeg -i #{path} -r 0.25 #{dir}/%d.jpg")
       Dir.foreach(dir) do |file|

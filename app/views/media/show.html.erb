@@ -2,24 +2,27 @@
 <div class="show_photo">
   <table>
     <tr>
-      <td>
-        <div id="prev">
-          <% if !@prev.nil? %>
-            <%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>
-          <% end %>
-        </div>
+      <td id="prev_container">
+        <% if !@prev.nil? %>
+          <%= link_to("<div id='prev' class='video_preview' style='width: #{@prev.thumb_width}px; height: #{@prev.thumb_height}px;'>
+            #{thumbnail_for @prev}</div>".html_safe, {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>
+          </div>
+        <% end %>
       </td>
       <td>
         <div id="photo">
-          <%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %><br/>
-        </div>
-      </td>
-      <td>
-        <div id="next">
-          <% if !@next.nil? %>
-            <%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>
+          <% if @media.is_a?Photo %>
+            <%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %><br/>
+          <% elsif @media.is_a?Video %>
+            <%= video_tag(@media.image.url(:theora), :title => @media.display_tags, :id => "display_photo_#{@media.id}", :controls => true) %>
           <% end %>
         </div>
+      </td>
+      <td id="next_container">
+        <% if !@next.nil? %>
+          <%= link_to("<div id='next' class='video_preview' style='width: #{@next.thumb_width}px; height: #{@next.thumb_height}px;'>
+            #{thumbnail_for @next}</div>".html_safe, {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>
+        <% end %>
       </td>
     </tr>
   </table>
@@ -63,6 +66,13 @@
             select: selectTag
           }
         });
+
+      <% if @prev.is_a?Video %>
+        $("#prev").<%= video_preview_for @prev %>
+      <% end %>
+      <% if @next.is_a?Video %>
+        $("#next").<%= video_preview_for @next %>
+      <% end %>
     });
   
 </script>

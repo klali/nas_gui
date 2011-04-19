@@ -71,7 +71,7 @@ class MediaController < ApplicationController
       end
       expire_for_tags(tags)
     end
-    redirect_to(media_url)
+    redirect_to("/media/")
   end
 
   def show

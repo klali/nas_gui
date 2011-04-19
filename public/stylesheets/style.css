@@ -141,3 +141,7 @@ a.selected_tag {
 .preview_row {
   height: 175px;
 }
+
+.cjImageVideoPreviewer img {
+  border: 0;
+}

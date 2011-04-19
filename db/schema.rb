@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110412053844) do
+ActiveRecord::Schema.define(:version => 20110419183459) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(:version => 20110412053844) do
     t.integer  "medium_size"
     t.integer  "thumb_size"
     t.string   "type"
+    t.time     "duration"
   end
 
   add_index "media", ["path"], :name => "index_photos_on_path", :unique => true

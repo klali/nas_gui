@@ -1,13 +1,19 @@
-<% if @prev.nil? %>
-  $('#prev').html('');
-<% else %>
-  $('#prev').html('<%= link_to(image_tag(@prev.image.url(:thumbnail), :border => 0, :title => "Previous photo"), {:action => :show, :id => @prev}, {:remote => true, :id => 'prevLink'}) %>');
+$('#prev_container').empty();
+<% unless @prev.nil? %>
+  $('#prev_container').append("<a id='prevLink' data-remote='true' href='<%=url_for(:action => :show, :id => @prev)%>'></a>");
+  $('#prevLink').append("<div id='prev' class='video_preview' style='width: <%=@prev.thumb_width%>px; height: <%=@prev.thumb_height%>px;'>");
+  $('#prev').append('<%=thumbnail_for(@prev)%>');
 <% end %>
-$('#photo').html('<%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %>');
-<% if @next.nil? %>
-  $('#next').html('');
-<% else %>
-  $('#next').html('<%= link_to(image_tag(@next.image.url(:thumbnail), :border => 0, :title => "Next photo"), {:action => :show, :id => @next}, {:remote => true, :id => 'nextLink'}) %>');
+<% if @media.is_a?Photo %>
+  $('#photo').html('<%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %>');
+<% elsif @media.is_a?Video %>
+  $('#photo').html('<%= video_tag(@media.image.url(:theora), :title => @media.display_tags, :id => "display_photo_#{@media.id}", :controls => true) %>');
+<% end %>
+$('#next_container').empty();
+<% unless @next.nil? %>
+  $('#next_container').append("<a id='nextLink' data-remote='true' href='<%=url_for(:action => :show, :id => @next)%>'></a>");
+  $('#nextLink').append("<div id='next' class='video_preview' style='width: <%=@next.thumb_width%>px; height: <%=@next.thumb_height%>px;'>");
+  $('#next').append('<%=thumbnail_for(@next)%>');
 <% end %>
 $('#footer').html('<div id="display_tags"><%= @media.display_tags %></div><%= @media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @media.id %> <%= link_to "Edit", :action => :edit, :id => @media.id %>');
 $('#stars').html('<div id="stars"></div>');
@@ -42,6 +48,13 @@ autocomplete: {
           select: selectTag
         }
       });
-  })
+
+    <% if @prev.is_a?Video %>
+      $("#prev").<%= video_preview_for @prev %>
+    <% end %>
+    <% if @next.is_a?Video %>
+      $("#next").<%= video_preview_for @next %>
+    <% end %>
+});
 
 jQuery(document).trigger('reveal.facebox');
