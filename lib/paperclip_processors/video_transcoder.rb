@@ -1,6 +1,3 @@
-require 'RMagick'
-include Magick
-
 module Paperclip
   class VideoTranscoder < Processor
     attr_accessor :geometry, :format
@@ -23,7 +20,7 @@ module Paperclip
         cmd = "ffmpeg2theora"
         opts = "--max_size #{@geometry}x#{@geometry} #{@path} -o #{File.expand_path(dst.path)}"
       elsif(@format == :mp4)
-        x,y = VideoTranscoder.calculate_x_y(@attachment.instance.video_captures.first.thumbnail.path, @geometry).map { |i|
+        x,y = VideoTranscoder.calculate_x_y(@attachment.instance.thumb_width, @attachment.instance.thumb_height, @geometry).map { |i|
           i = i.to_i
           if(i % 2 == 1)
             i = i.succ
@@ -36,19 +33,21 @@ module Paperclip
       end
       begin
         Paperclip.run(cmd, opts)
+        if(@format == :mp4)
+          dst2 = Tempfile.new([ @basename, @format ].compact.join("."))
+          dst2.binmode
+          Paperclip.run('qt-faststart', "#{File.expand_path(dst.path)} #{File.expand_path(dst2.path)}")
+          dst = dst2
+        end
       rescue PaperclipCommandLineError
         raise PaperclipError, "error transcoding video"
       end
       dst
     end
 
-    def self.calculate_x_y(image, pixels)
-      i = Image.read(image).first
-      i_x = i.columns
-      i_y = i.rows
-      i.destroy!
-      factor = [i_x, i_y].max / pixels.to_f
-      [i_x / factor, i_y / factor]
+    def self.calculate_x_y(x, y, pixels)
+      factor = [x, y].max / pixels.to_f
+      [x / factor, y / factor]
     end
   end
 end
