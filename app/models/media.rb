@@ -1,5 +1,5 @@
 class Media < ActiveRecord::Base
-  has_and_belongs_to_many :tags
+  has_and_belongs_to_many :tags, :order => :lft
 
   scope :tags, lambda { |tags|
     joins(join_for_tags(tags)).group('media.id').having("count(pt_group.media_id) >= #{tags.count}")
