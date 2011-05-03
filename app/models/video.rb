@@ -4,10 +4,15 @@ include Magick
 class Video < Media
   has_attached_file :image, :styles => {
     :theora => {
-      :geometry => '700x700',
+      :geometry => '700',
       :format => :ogv,
+    },
+    :h264 => {
+      :geometry => '700',
+      :format => :mp4,
     }
   }, :processors => [:video_transcoder]
+
   has_many :video_captures, :dependent => :destroy, :order => :sort
 
   def self.add_or_update(file, force_update = false)
