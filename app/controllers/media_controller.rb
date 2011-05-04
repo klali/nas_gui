@@ -129,18 +129,18 @@ class MediaController < ApplicationController
   end
 
   def rotate_left
-    photo = Photo.find(params[:id])
-    photo.rotate("left")
-    respond_to do |format|
-      format.html { redirect_to({:action => :index, :modal => photo.id}, {:notice => "Photo successfully rotated."}) }
-    end
+    rotate(params[:id], :left)
   end
 
   def rotate_right
-    photo = Photo.find(params[:id])
-    photo.rotate("right")
+    rotate(params[:id], :right)
+  end
+
+  def rotate(id, direction)
+    media = Media.find(id)
+    media.rotate(direction)
     respond_to do |format|
-      format.html { redirect_to({:action => :index, :modal => photo.id}, {:notice => "Photo successfully rotated."}) }
+      format.html { redirect_to({:action => :index, :modal => media.id}, {:notice => "#{media.class} successfully rotated."}) }
     end
   end
 

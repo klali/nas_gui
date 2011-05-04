@@ -77,9 +77,9 @@ class Photo < Media
   end
 
   def rotate(direction)
-    if(direction.eql?("left"))
+    if(direction.eql?(:left))
       angle = -90
-    elsif(direction.eql?("right"))
+    elsif(direction.eql?(:right))
       angle = 90
     else
       raise ArgumentError, "Only left or right are acceptable arguments."
