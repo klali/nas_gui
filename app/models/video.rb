@@ -48,7 +48,7 @@ class Video < Media
       vc.destroy
     end
     Dir.mktmpdir do |dir|
-      system("ffmpeg -i #{path} -r 0.25 #{dir}/%d.jpg")
+      system("ffmpeg -i '#{path}' -r 0.25 #{dir}/%d.jpg")
       Dir.foreach(dir) do |file|
         next unless file.ends_with?"jpg"
         vc = video_captures.build
