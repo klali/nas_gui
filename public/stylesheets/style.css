@@ -145,3 +145,8 @@ a.selected_tag {
 .cjImageVideoPreviewer img {
   border: 0;
 }
+
+#r_thumbnail {
+  position: relative;
+  height: 150px;
+}

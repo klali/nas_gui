@@ -1,10 +1,10 @@
-<h1>Editing photo</h1>
+<h1>Editing <%= @media.class %></h1>
 
 <p id="notice"><%= notice %></p>
 
 <div id="rotate">
-  <div id="thumbnail">
-    <%= image_tag @media.image.url(:thumbnail) %>
+  <div id="r_thumbnail">
+    <%= thumbnail_for(@media) %>
   </div>
   <div id="rotate_left">
     <%= link_to(image_tag("rotate_left.png", :height => "50", :width => "50", :border => 0), :action => :rotate_left) %>
