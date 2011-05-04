@@ -102,8 +102,7 @@ class MediaController < ApplicationController
     respond_to do |format|
       if media.update_attributes(params[:media])
         session[:modal] = media.id
-        flash[:notice] = "#{media.class} was successfully updated."
-        format.html { redirect_to(:action => :index)}
+        format.html { redirect_to({:action => :index}, {:notice => "#{media.class} was successfully updated."})}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -138,8 +137,7 @@ class MediaController < ApplicationController
     media.rotate(direction)
     session[:modal] = media.id
     respond_to do |format|
-      flash[:notice] = "#{media.class} successfully rotated"
-      format.html { redirect_to({:action => :index}) }
+      format.html { redirect_to({:action => :index}, {:notice => "#{media.class} successfully rotated"})}
     end
   end
 
