@@ -14,6 +14,9 @@ class MediaController < ApplicationController
 
     if(params[:modal])
       @modal = params[:modal]
+    elsif(session[:modal])
+      @modal = session[:modal]
+      session.delete(:modal)
     end
 
     @editing = session[:editing] || "false"
@@ -88,16 +91,8 @@ class MediaController < ApplicationController
     end
   end
 
-  def new
-    @media = Media.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @media }
-    end
-  end
-
   def edit
+    session[:modal] = params[:id]
     @media = Media.find(params[:id])
   end
 
@@ -106,7 +101,9 @@ class MediaController < ApplicationController
 
     respond_to do |format|
       if media.update_attributes(params[:media])
-        format.html { redirect_to(:action => :index, :modal => media.id, :notice => 'Media was successfully updated.')}
+        session[:modal] = media.id
+        flash[:notice] = "#{media.class} was successfully updated."
+        format.html { redirect_to(:action => :index)}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -139,8 +136,10 @@ class MediaController < ApplicationController
   def rotate(id, direction)
     media = Media.find(id)
     media.rotate(direction)
+    session[:modal] = media.id
     respond_to do |format|
-      format.html { redirect_to({:action => :index, :modal => media.id}, {:notice => "#{media.class} successfully rotated."}) }
+      flash[:notice] = "#{media.class} successfully rotated"
+      format.html { redirect_to({:action => :index}) }
     end
   end
 
