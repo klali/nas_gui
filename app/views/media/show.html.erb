@@ -14,7 +14,7 @@
           <% if @media.is_a?Photo %>
             <%= link_to(image_tag(@media.image.url(:medium), :border => 0, :title => @media.display_tags, :id => "display_photo_#{@media.id}"), @media.image.url) %>
           <% elsif @media.is_a?Video %>
-            <%= link_to(video_tag([@media.image.url(:theora), @media.image.url(:h264)], :title => @media.display_tags, :id => "display_photo_#{@media.id}", :controls => true), @media.image.url) %>
+            <%= video_tag([@media.image.url(:theora), @media.image.url(:h264)], :title => @media.display_tags, :id => "display_photo_#{@media.id}", :controls => true) %>
           <% end %>
         </div>
       </td>
