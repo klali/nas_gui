@@ -189,8 +189,10 @@ class MediaController < ApplicationController
 
   def expire_for_tags(tags)
     expire_fragment(/tags_.*/)
-    tags.each do |tag|
-      expire_fragment(/histogram.*tags=.*#{tag}.*/)
+    unless(tags.nil?)
+      tags.each do |tag|
+        expire_fragment(/histogram.*tags=.*#{tag}.*/)
+      end
     end
   end
 
