@@ -15,8 +15,11 @@ $('#next_container').empty();
   $('#nextLink').append("<div id='next' class='video_preview' style='width: <%=@next.thumb_width%>px; height: <%=@next.thumb_height%>px;'>");
   $('#next').append('<%=thumbnail_for(@next)%>');
 <% end %>
-$('#footer').html('<div id="display_tags"><%= @media.display_tags %></div><%= @media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %><br/>  <%= link_to "Slideshow", :action => :slideshow, :id => @media.id %> <%= link_to "Edit", :action => :edit, :id => @media.id %>');
-$('#stars').html('<div id="stars"></div>');
+$('#footer').empty();
+$('#footer').append("<div id='display_tags'><%= @media.display_tags %></div>");
+$('#footer').append("<div id='display_taken_at'><%= @media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)') %></div>");
+$('#footer').append('<%= link_to "Slideshow", :action => :slideshow, :id => @media.id %> <%= link_to "Edit", :action => :edit, :id => @media.id %>');
+$('#stars').empty();
 
 $(function() {
     $('#stars').raty({
@@ -48,6 +51,18 @@ autocomplete: {
           select: selectTag
         }
       });
+
+    $('#display_taken_at').editable("/media/<%= @media.id %>/update_taken_at",
+        { tooltip: 'Click to edit..',
+          type: 'datetime',
+      onblur: 'ignore',
+      datetime: {
+        format: "yy-mm-dd hh:ii:'00 ('D')'",
+      hide: function() {
+        $('#display_taken_at > form').trigger('submit');
+      }
+      }
+        });
 
     <% if @prev.is_a?Video %>
       $("#prev").<%= video_preview_for @prev %>

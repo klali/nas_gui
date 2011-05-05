@@ -4,7 +4,7 @@
 $.facebox.settings.closeImage = '/images/closelabel.png';
 $.facebox.settings.loadingImage = '/images/loading.gif';
 
-$(document).ready(function($) {
+$(document).ready(function() {
     $('a[rel*=facebox]').facebox();
     $('ul.sortable').nestedSortable({
       listType: 'ul',
@@ -24,23 +24,46 @@ $(document).ready(function($) {
         return true;
       }
     });
-});
 
-$(document).bind('reveal.facebox', function() {
-    setTimeout("$('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))", 250);
+    $.editable.addInputType('autocomplete', {
+      element : $.editable.types.text.element,
+      plugin : function(settings, original) {
+        $('input', this).autocomplete(settings.autocomplete)
+      .bind("keydown", function(event) {
+        var auto = $(this).data("autocomplete");
+        if ( event.keyCode === $.ui.keyCode.TAB) {
+          if(auto.menu.element.is(":visible")) {
+            auto._move("next", event);
+            event.preventDefault();
+          }
+        }
+      });
+      }
     });
 
-$(document).bind('loading.facebox', function() {
-    $(document).bind('keydown.facebox', function(e) {
-      if(e.keyCode == 39) $('#nextLink').click();
-      if(e.keyCode == 37) $('#prevLink').click();
-      return true;
+    jQuery.editable.addInputType('datetime', {
+      element : $.editable.types.text.element,
+      plugin : function(settings, original) {
+        $('input', this).datetime(settings.datetime).datetime('show');
+      }
+    });
+
+    $(document).bind('reveal.facebox', function() {
+      setTimeout("$('#facebox').css('left', $(window).width() / 2 - ($('#facebox .popup').outerWidth() / 2))", 250);
+    });
+
+    $(document).bind('loading.facebox', function() {
+      $(document).bind('keydown.facebox', function(e) {
+        if(e.keyCode == 39) $('#nextLink').click();
+        if(e.keyCode == 37) $('#prevLink').click();
+        return true;
       });
     });
 
-$(document).bind('close.facebox', function() {
-    $('img#crop_photo').imgAreaSelect({ remove: true });
+    $(document).bind('close.facebox', function() {
+      $('img#crop_photo').imgAreaSelect({ remove: true });
     });
+});
 
 function storeResults(img, selection) {
   $('input#temp_thumb_width').val(selection.width);
@@ -59,21 +82,6 @@ function saveThumb() {
   $(document).trigger('close.facebox');
 };
 
-$.editable.addInputType('autocomplete', {
-  element : $.editable.types.text.element,
-  plugin : function(settings, original) {
-    $('input', this).autocomplete(settings.autocomplete)
-      .bind("keydown", function(event) {
-        var auto = $(this).data("autocomplete");
-        if ( event.keyCode === $.ui.keyCode.TAB) {
-          if(auto.menu.element.is(":visible")) {
-            auto._move("next", event);
-            event.preventDefault();
-          }
-        }
-        });
-  }
-});
 
 function selectTag(event, ui) {
   var terms = this.value.split(/,\s*/);
