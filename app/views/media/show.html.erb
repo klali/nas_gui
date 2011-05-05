@@ -71,11 +71,10 @@
           { tooltip: 'Click to edit..',
             type: 'datetime',
             onblur: 'ignore',
+            submit: 'Submit',
+            cancel: 'Cancel',
             datetime: {
               format: "yy-mm-dd hh:ii:'00 ('D')'",
-              hide: function() {
-                $('#display_taken_at > form').trigger('submit');
-              }
             }
           });
 
