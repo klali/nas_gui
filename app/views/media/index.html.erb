@@ -9,7 +9,7 @@
       <ul class="histogram">
         <% @histogram_data.each do |histogram| %>
           <li>
-          <%= link_to(image_tag("/media/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false&tags=#{@selected_tags.join '_'}", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
+          <%= link_to(image_tag("/media/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
           </li>
         <% end %>
       </ul>
