@@ -162,7 +162,7 @@
 
       <% @current_hist.each do |current| %>
         img = $("img#histimg_<%= "#{current[:year]}_#{current[:month]}" %>")
-        img.attr('src', <%="'/media/histogram?year=#{current[:year]}&month=#{current[:month]}&max=#{@hist_max}&count=#{current[:count]}&current=true&tags=#{@selected_tags.join '_'}'".html_safe %>);
+        img.attr('src', <%="'/media/histogram?year=#{current[:year]}&month=#{current[:month]}&max=#{@hist_max}&count=#{current[:count]}&current=true'".html_safe %>);
       <% end %>
 
       <% @selected_tags.each do |tag| %>
