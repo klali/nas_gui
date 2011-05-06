@@ -72,7 +72,7 @@ class MediaController < ApplicationController
           media.tag_ids -= tags
         end
       end
-      expire_for_tags(tags)
+      expire_everything
     end
     redirect_to("/media/")
   end
@@ -180,20 +180,14 @@ class MediaController < ApplicationController
   def update_tags
     media = Media.find(params[:id])
     tag_names = params[:value].split ','
-    tags = tag_names.map { |t| Tag.find_or_create_by_name(t.strip).id }
-    old_tags = media.tag_ids
-    media.tag_ids = tags
-    expire_for_tags((tags + old_tags).uniq!)
+    media.tag_ids = tag_names.map { |t| Tag.find_or_create_by_name(t.strip).id }
+    expire_everything
     render :text => media.display_tags
   end
 
-  def expire_for_tags(tags)
-    expire_fragment(/tags_.*/)
-    unless(tags.nil?)
-      tags.each do |tag|
-        expire_fragment(/histogram.*tags=.*#{tag}.*/)
-      end
-    end
+  def expire_everything
+    expire_fragment(/action_suffix.*tags_.*/)
+    expire_fragment(/action_suffix.*histogram_.*/)
   end
 
   def update_tag_display
@@ -216,7 +210,7 @@ class MediaController < ApplicationController
     media = Media.find(params[:id])
     media.taken_at = DateTime.parse(params[:value])
     media.save
-    expire_for_tags(media.tag_ids)
+    expire_everything
     render :text => media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)')
   end
 end
