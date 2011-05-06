@@ -70,7 +70,7 @@
             </span>
           <% else %>
             <% if @selected_tags.find_index(node.id.to_s).nil? %>
-              <% if node.media.empty? %>
+              <% if node.media.count == 0 %>
                 <%= node.name %>
               <% else %>
                 <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
