@@ -215,6 +215,7 @@ class MediaController < ApplicationController
   def update_taken_at
     media = Media.find(params[:id])
     media.taken_at = DateTime.parse(params[:value])
+    media.save
     expire_for_tags(media.tag_ids)
     render :text => media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)')
   end
