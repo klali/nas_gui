@@ -7,7 +7,7 @@ class MediaController < ApplicationController
   def index
     page = (params[:page] || session[:page] || 1).to_i
     session[:page] = page
-    @selected_tags = session[:tags] || []
+    @selected_tags = params[:tags] || session[:tags] || []
     @sort = params[:sort] || session[:sort] || "desc"
     session[:sort] = @sort
     @hidden_tags = session[:hidden_tags] || []
