@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110419183459) do
+ActiveRecord::Schema.define(:version => 20110510053754) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -26,7 +26,6 @@ ActiveRecord::Schema.define(:version => 20110419183459) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "path"
-    t.boolean  "deleted",            :default => false
     t.datetime "taken_at"
     t.float    "stars"
     t.string   "image_file_name"
@@ -74,6 +73,16 @@ ActiveRecord::Schema.define(:version => 20110419183459) do
   end
 
   add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
+
+  create_table "trash_records", :force => true do |t|
+    t.string   "trashable_type",                     :null => false
+    t.integer  "trashable_id",                       :null => false
+    t.binary   "data",           :limit => 16777215
+    t.datetime "created_at"
+  end
+
+  add_index "trash_records", ["created_at", "trashable_type"], :name => "created_at_type"
+  add_index "trash_records", ["trashable_type", "trashable_id"], :name => "trashable"
 
   create_table "video_captures", :force => true do |t|
     t.datetime "created_at"

@@ -1,11 +1,14 @@
 class Media < ActiveRecord::Base
   has_and_belongs_to_many :tags, :order => :lft
+  acts_as_trashable
 
   scope :tags, lambda { |tags|
     joins(join_for_tags(tags)).group('media.id').having("count(pt_group.media_id) >= #{tags.count}")
   }
 
-  default_scope where(:deleted => false)
+  def update_media
+    self.class.add_or_update(path, true)
+  end
 
   def self.get_by_path(path)
     with_exclusive_scope{Media.find_by_path path}
@@ -99,9 +102,9 @@ class Media < ActiveRecord::Base
     num_counts = 0
     raw_months_data = nil
     if(tags.nil? || tags.empty?)
-      raw_months_data = connection.execute("select count(id),date_format(taken_at, '%Y-%m') as taken_month from media where deleted = false group by taken_month")
+      raw_months_data = connection.execute("select count(id),date_format(taken_at, '%Y-%m') as taken_month from media group by taken_month")
     else
-      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select media.id,media.taken_at from media #{join_for_tags(tags)} where media.deleted = false group by media.id having count(pt_group.media_id) >= #{tags.count}) as p2 group by taken_month")
+      raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select media.id,media.taken_at from media #{join_for_tags(tags)} group by media.id having count(pt_group.media_id) >= #{tags.count}) as p2 group by taken_month")
     end
     if(raw_months_data.num_rows == 0)
       return nil

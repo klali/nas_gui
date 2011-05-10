@@ -15,7 +15,7 @@ class Tag < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true, :format => {:with => /^[^\,]+$/, :message => "Tag name can't contain ','."}
 
   def get_first_photo
-    Media.joins("join media_tags pt on pt.photo_id = media.id").where("pt.tag_id = #{id} and media.deleted = false").order('media.taken_at desc').first
+    Media.joins("join media_tags pt on pt.photo_id = media.id").where("pt.tag_id = #{id}").order('media.taken_at desc').first
   end
 
   def thumb_id=(id)

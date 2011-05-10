@@ -26,7 +26,6 @@ class Photo < Media
     end
     p.path = file
     p.name = File.basename file
-    p.deleted = false
     exif = MiniExiftool.new file
     ex_date = exif.DateTimeOriginal
     if(ex_date.nil?)
