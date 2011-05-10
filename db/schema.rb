@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110510053754) do
+ActiveRecord::Schema.define(:version => 20110510061847) do
 
   create_table "configurations", :force => true do |t|
     t.datetime "created_at"
@@ -94,5 +94,7 @@ ActiveRecord::Schema.define(:version => 20110510053754) do
     t.integer  "video_id"
     t.integer  "sort"
   end
+
+  add_index "video_captures", ["video_id"], :name => "index_video_captures_on_video_id"
 
 end
