@@ -30,6 +30,7 @@ class Video < Media
     v.taken_at = stat.ctime
     v.save
     v.generate_captures
+    v.video_captures.reload
     thumb_path = v.video_captures.first.thumbnail.path
     t = Image.read(thumb_path).first
     v.thumb_width = t.columns
