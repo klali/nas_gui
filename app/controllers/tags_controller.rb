@@ -46,7 +46,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       if @tag.save
-        format.html { redirect_to({:controller => :photos}, {:notice => 'Tag was successfully created.'}) }
+        format.html { redirect_to({:controller => :media}, {:notice => 'Tag was successfully created.'}) }
         format.xml  { render :xml => @tag, :status => :created, :location => @tag }
       else
         format.html { render :action => "new" }
@@ -62,7 +62,7 @@ class TagsController < ApplicationController
 
     respond_to do |format|
       if @tag.update_attributes(params[:tag])
-        format.html { redirect_to({:controller => :photos}, {:notice => "Tag '#{@tag.name}' was successfully updated."})}
+        format.html { redirect_to({:controller => :media}, {:notice => "Tag '#{@tag.name}' was successfully updated."})}
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -78,7 +78,7 @@ class TagsController < ApplicationController
     @tag.destroy
 
     respond_to do |format|
-      format.html { redirect_to(:controller => :photos) }
+      format.html { redirect_to(:controller => :media) }
       format.xml  { head :ok }
     end
   end

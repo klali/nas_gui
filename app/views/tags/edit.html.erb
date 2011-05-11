@@ -3,4 +3,4 @@
 <%= render 'form' %>
 
 <%= link_to 'Delete', {:action => 'destroy', :id => @tag.id}, {:method => :delete, :confirm => "really delete '#{@tag.name}'?"} %> |
-<%= link_to 'Back', photos_path %>
+<%= link_to 'Back', '/media/' %>
