@@ -27,7 +27,7 @@ class Video < Media
     end
     v.path = file
     v.name = File.basename file
-    v.taken_at = stat.ctime
+    v.taken_at ||= stat.ctime
     v.save
     v.generate_captures
     v.video_captures.reload
