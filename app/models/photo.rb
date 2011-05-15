@@ -40,11 +40,11 @@ class Photo < Media
     if(exif.orientation.eql? "Rotate 90 CW")
       exif.orientation = ""
       exif.save
-      p.rotate "right"
+      p.rotate :right
     elsif(exif.orientation.eql? "Rotate 90 CCW")
       exif.orientation = ""
       exif.save
-      p.rotate "left"
+      p.rotate :left
     end
     p.set_width_and_height
     p.set_sizes
