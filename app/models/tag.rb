@@ -4,7 +4,7 @@ include Magick
 class Tag < ActiveRecord::Base
   has_and_belongs_to_many :media
   acts_as_nested_set
-  acts_as_trashable
+  acts_as_trashable :excluded_attributes => [:lft, :rgt]
   has_attached_file :thumbnail
 
   default_scope order(:lft)
