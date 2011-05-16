@@ -2,7 +2,7 @@ require 'RMagick'
 include Magick
 
 class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :media
+  has_and_belongs_to_many :media, :order => :taken_at
   acts_as_nested_set
   acts_as_trashable :excluded_attributes => [:lft, :rgt]
   has_attached_file :thumbnail
@@ -14,10 +14,6 @@ class Tag < ActiveRecord::Base
   }
 
   validates :name, :presence => true, :uniqueness => true, :format => {:with => /^[^\,]+$/, :message => "Tag name can't contain ','."}
-
-  def get_first_photo
-    Media.joins("join media_tags pt on pt.photo_id = media.id").where("pt.tag_id = #{id}").order('media.taken_at desc').first
-  end
 
   def thumb_id=(id)
     self['thumb_id'] = id
@@ -53,15 +49,16 @@ class Tag < ActiveRecord::Base
     if(thumb_id.nil? || thumb_width.nil? || thumb_height.nil? || thumb_x1.nil? || thumb_y1.nil?)
       return false
     end
-    image = Image.read(Photo.find(thumb_id).image.path).first
+    image = Image.read(Photo.find(thumb_id).image.path(:medium)).first
     temp_thumb = image.crop(thumb_x1, thumb_y1, thumb_width, thumb_height)
     temp_thumb.scale!(75,75)
     temp_thumb.strip!
-    file = Tempfile.new('thumbnail')
-    file.write temp_thumb.to_blob { self.quality = 50 }
+    file = Tempfile.new(['thumbnail', '.jpg'])
+    temp_thumb.write(file.path) { self.quality = 50 }
     self.thumbnail = file
     file.close
     file.unlink
+    temp_thumb.destroy!
     save
   end
 

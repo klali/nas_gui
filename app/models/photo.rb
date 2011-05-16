@@ -61,7 +61,7 @@ class Photo < Media
     self.width = i.columns
     self.height = i.rows
     i.destroy!
-    m = Image.read(image.path).first
+    m = Image.read(image.path(:medium)).first
     self.medium_width = m.columns
     self.medium_height = m.rows
     m.destroy!
@@ -74,7 +74,7 @@ class Photo < Media
   end
 
   def set_sizes
-    self.medium_size = File.stat(image.path).size
+    self.medium_size = File.stat(image.path(:medium)).size
     self.thumb_size = File.stat(image.path(:thumbnail)).size
     save
     self

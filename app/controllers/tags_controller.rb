@@ -87,8 +87,10 @@ class TagsController < ApplicationController
     if(params[:photo_id])
       @photo = Photo.find(params[:photo_id])
     end
+    @last_photo = @tag.media.where(:type => :photo).last
+    @first_photo = @tag.media.where(:type => :photo).first
     if(@photo.nil?)
-      @photo ||= @tag.get_first_photo
+      @photo ||= @last_photo
     end
     if(@tag.thumbnail?)
       @x1 = @tag.thumb_x1
@@ -96,7 +98,7 @@ class TagsController < ApplicationController
       @x2 = @tag.thumb_x1 + @tag.thumb_width
       @y2 = @tag.thumb_y1 + @tag.thumb_height
     end
-    mediumimage = Image.read(@photo.image.path).first
+    mediumimage = Image.read(@photo.image.path(:medium)).first
     @photo_width = mediumimage.columns
     @photo_height = mediumimage.rows
     @next_photo = @photo.get_next('desc', [@tag.id])
