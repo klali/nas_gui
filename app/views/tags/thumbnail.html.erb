@@ -1,6 +1,11 @@
 <div>
   <table>
     <tr>
+      <td><%= link_to("Last", {:action => :thumbnail, :id => @tag.id, :photo_id => @last_photo.id}, {:remote => true})%></td>
+      <td></td>
+      <td><%= link_to("First", {:action => :thumbnail, :id => @tag.id, :photo_id => @first_photo.id}, {:remote => true})%></td>
+    </tr>
+    <tr>
       <td>
         <div id="prev_photo">
           <% unless @prev_photo.nil? %>
