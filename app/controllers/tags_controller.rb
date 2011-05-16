@@ -1,6 +1,4 @@
 class TagsController < ApplicationController
-  cache_sweeper :tag_sweeper
-
   # GET /tags
   # GET /tags.xml
   def index
@@ -136,7 +134,6 @@ class TagsController < ApplicationController
         last_root = tag
       end
     end
-    expire_fragment(/tags_.*/)
     respond_to do |format|
       format.js
     end

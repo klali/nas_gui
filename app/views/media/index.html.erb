@@ -4,17 +4,15 @@
   <p id="notice"><%= notice %></p>
   <p><%= page_entries_info @media %>
 
-  <% cache(:action => 'index', :action_suffix => "histogram_#{@sort}_#{@selected_tags.join '_'}") do %>
-    <div class="histogram">
-      <ul class="histogram">
-        <% @histogram_data.each do |histogram| %>
-          <li>
-          <%= link_to(image_tag("/media/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <div class="histogram">
+    <ul class="histogram">
+      <% @histogram_data.each do |histogram| %>
+        <li>
+        <%= link_to(image_tag("/media/histogram?year=#{histogram[:year]}&month=#{histogram[:month]}&max=#{@hist_max}&count=#{histogram[:count]}&current=false", :border => 0, :title => "jump to page #{histogram[:page]}", :id => "histimg_#{histogram[:year]}_#{histogram[:month]}"), :action => :index, :page => histogram[:page]) %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
   <%= form_tag('/media/filter_tags') %>
   <table id="photos">
     <% counter = 0 %>
@@ -48,63 +46,61 @@
     <% end %>
   </table>
 
-  <%= cache(:action => 'index', :action_suffix => "tags_#{@editing}_#{@selected_tags.join '_'}") do %>
-    <div id="tags">
-      <% if @editing == "true" %>
-        <%= submit_tag "filter" %>
-        <%= submit_tag "assign" %>
-        <%= submit_tag "remove" %>
+  <div id="tags">
+    <% if @editing == "true" %>
+      <%= submit_tag "filter" %>
+      <%= submit_tag "assign" %>
+      <%= submit_tag "remove" %>
+    <% end %>
+    <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
+      <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
+      <% rel = "" %>
+      <% if node.thumbnail? %>
+        <% rel = "rel='htmltooltip'" %>
       <% end %>
-      <%= render_tree(Tag.arrange, :class => 'sortable') do |node, child| %>
-        <li class="tag" id="tag_<%= node.id %>" tag="<%= node.id %>">
-        <% rel = "" %>
-        <% if node.thumbnail? %>
-          <% rel = "rel='htmltooltip'" %>
-        <% end %>
-        <div class="tag_inner" <%= rel %>>
-          <% if @editing == "true" %>
-            <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
-            <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
-            <span id="tag_count_<%= node.id %>">
-              <%= "(#{node.media.count})" %>
-            </span>
-          <% else %>
-            <% if @selected_tags.find_index(node.id.to_s).nil? %>
-              <% if node.media.count == 0 %>
-                <%= node.name %>
-              <% else %>
-                <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
-                <span id="tag_count_<%= node.id %>">
-                  <%= "(#{Media.tags(@selected_tags + [node.id.to_s]).count.size})" %>
-                </span>
-              <% end %>
+      <div class="tag_inner" <%= rel %>>
+        <% if @editing == "true" %>
+          <%= check_box_tag "tags[]", "#{node.id}", false, :tabindex => counter += 1 %>
+          <%= link_to(node.name, :controller => :tags, :action => 'edit', :id => node.id) %>
+          <span id="tag_count_<%= node.id %>">
+            (<%= @raw_tag_data[node.id] ? @raw_tag_data[node.id] : "0" %>)
+          </span>
+        <% else %>
+          <% if @selected_tags.find_index(node.id.to_s).nil? %>
+            <% if @raw_tag_data[node.id].nil? %>
+              <%= node.name %>
             <% else %>
-              <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags - [node.id.to_s], :commit => 'filter'), :class => 'selected_tag', :title => "Deselect '#{node.name}'", :method => :post) %>
+              <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags + [node.id], :commit => 'filter'), :title => "Select '#{node.name}'", :method => :post) %>
+              <span id="tag_count_<%= node.id %>">
+                (<%= @tag_data[node.id] ? @tag_data[node.id] : "0" %>)
+              </span>
             <% end %>
+          <% else %>
+            <%= link_to(node.name, url_for(:action => 'filter_tags', :tags => @selected_tags - [node.id.to_s], :commit => 'filter'), :class => 'selected_tag', :title => "Deselect '#{node.name}'", :method => :post) %>
           <% end %>
-          <% if node.has_descendants? %>
-            <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
-          <% end %>
-        </div>
-        <% if node.thumbnail? %>
-          <div class="htmltooltip">
-            <%= image_tag(node.thumbnail.url) %>
-          </div>
         <% end %>
-        <%= child %>
-        </li>
+        <% if node.has_descendants? %>
+          <%= image_tag("/images/down_arrow.png", :title => "Hide \"#{node.name}\"", :class => "folding_arrow", :id => "arrow_#{node.id}") %>
+        <% end %>
+      </div>
+      <% if node.thumbnail? %>
+        <div class="htmltooltip">
+          <%= image_tag(node.thumbnail.url) %>
+        </div>
       <% end %>
-      <% if @editing == "true" %>
-        <%= submit_tag "filter" %>
-        <%= submit_tag "assign" %>
-        <%= submit_tag "remove" %>
-      <% end %>
-      <br/>
-      <% if @editing == "true" %>
-        <%= link_to("New tag", :controller => :tags, :action => 'new') %>
-      <% end %>
-    </div>
-  <% end %>
+      <%= child %>
+      </li>
+    <% end %>
+    <% if @editing == "true" %>
+      <%= submit_tag "filter" %>
+      <%= submit_tag "assign" %>
+      <%= submit_tag "remove" %>
+    <% end %>
+    <br/>
+    <% if @editing == "true" %>
+      <%= link_to("New tag", :controller => :tags, :action => 'new') %>
+    <% end %>
+  </div>
 </form>
 
 <div class="footer">

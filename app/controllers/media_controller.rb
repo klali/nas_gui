@@ -2,7 +2,6 @@ class MediaController < ApplicationController
   caches_action :histogram, :cache_path => Proc.new { |controller|
     controller.params
   }
-  cache_sweeper :media_sweeper
 
   def index
     page = (params[:page] || session[:page] || 1).to_i
@@ -53,6 +52,9 @@ class MediaController < ApplicationController
     end
     @current_hist = current_hist_tmp.map { |hist| @histogram_data[hist] }
 
+    @tag_data = Tag.get_tag_data(@selected_tags)
+    @raw_tag_data = Tag.get_tag_data
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @media }
@@ -72,7 +74,6 @@ class MediaController < ApplicationController
           media.tag_ids -= tags
         end
       end
-      expire_everything
     end
     redirect_to("/media/")
   end
@@ -181,13 +182,7 @@ class MediaController < ApplicationController
     media = Media.find(params[:id])
     tag_names = params[:value].split ','
     media.tag_ids = tag_names.map { |t| Tag.find_or_create_by_name(t.strip).id }
-    expire_everything
     render :text => media.display_tags
-  end
-
-  def expire_everything
-    expire_fragment(/action_suffix.*tags_.*/)
-    expire_fragment(/action_suffix.*histogram_.*/)
   end
 
   def update_tag_display
@@ -210,7 +205,6 @@ class MediaController < ApplicationController
     media = Media.find(params[:id])
     media.taken_at = DateTime.parse(params[:value])
     media.save
-    expire_everything
     render :text => media.taken_at.strftime('%Y-%m-%d %H:%M:%S (%a)')
   end
 end

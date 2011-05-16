@@ -9,6 +9,7 @@ gem 'jquery-rails', '>= 0.2.6'
 gem 'paperclip'
 gem 'jammit'
 gem 'acts_as_trashable', :git => 'git://github.com/klali/acts_as_trashable.git'
+gem "mysql2", "~> 0.2.7"
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

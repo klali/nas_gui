@@ -106,10 +106,10 @@ class Media < ActiveRecord::Base
     else
       raw_months_data = connection.execute("select count(p2.id),date_format(p2.taken_at, '%Y-%m') as taken_month from (select media.id,media.taken_at from media #{join_for_tags(tags)} group by media.id having count(pt_group.media_id) >= #{tags.count}) as p2 group by taken_month")
     end
-    if(raw_months_data.num_rows == 0)
+    if(raw_months_data.entries.size == 0)
       return nil
     end
-    while(data = raw_months_data.fetch_row)
+    raw_months_data.each do |data|
       count,date = data
       count = count.to_i
       year,month = date.split('-')

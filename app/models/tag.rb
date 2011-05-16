@@ -64,4 +64,12 @@ class Tag < ActiveRecord::Base
     file.unlink
     save
   end
+
+  def self.get_tag_data(tags = nil)
+    if(tags.nil? || tags.empty?)
+      return Tag.joins('join media_tags mt on tags.id = mt.tag_id').group('mt.tag_id').count
+    else
+      return Media.joins(Media.join_for_tags(tags)).group('pt_group.tag_id').count
+    end
+  end
 end
