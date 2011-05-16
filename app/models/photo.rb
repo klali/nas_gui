@@ -46,8 +46,13 @@ class Photo < Media
       exif.save
       p.rotate :left
     end
-    p.set_width_and_height
-    p.set_sizes
+    begin
+      p.set_width_and_height
+      p.set_sizes
+    rescue
+      p.delete
+      p = nil
+    end
     p
   end
 
